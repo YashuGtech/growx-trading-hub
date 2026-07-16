@@ -453,7 +453,7 @@
   /* ---------- Verify Form Submission ---------- */
   const verifyForm = document.getElementById('verify-form');
   if (verifyForm) {
-    verifyForm.addEventListener('submit', (e) => {
+    verifyForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const txnInput = document.getElementById('txn-hash');
       const fileInput = document.getElementById('txn-img');
@@ -468,6 +468,19 @@
         return;
       }
       localStorage.setItem('fnx_tx_hash', hash);
+      const submitBtn = verifyForm.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+      try {
+        const plan = localStorage.getItem('fnx_plan') || 'Stellar 1';
+        const balance = localStorage.getItem('fnx_balance') || '10000';
+        const price = Number((localStorage.getItem('fnx_price') || '159').replace(/[^0-9.]/g, '')) || 0;
+        const network = localStorage.getItem('fnx_network') || 'TRC20';
+        await fetch('/api/orders', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan, balance, price_usd: price, network, tx_hash: hash }),
+        });
+      } catch (_) {}
       window.location.href = 'waiting.html';
     });
   }

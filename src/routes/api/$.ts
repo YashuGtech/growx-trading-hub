@@ -243,6 +243,118 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
   }
 
   // ---------------- TRADE ACCOUNT AUTH ----------------
+  if (path === "/trade/instant-issue" && method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user) return json({ ok: false, error: "unauthorized" }, { status: 401 });
+
+    // If this user already has an active trade account, return the most recent one.
+    const existing = await db.from("trade_accounts")
+      .select("*").eq("user_id", user.id)
+      .order("created_at", { ascending: false }).limit(1).maybeSingle();
+    if (existing.data) {
+      const acc = existing.data as any;
+      return json({
+        ok: true, trade_id: acc.trade_id, password: acc.password_plain,
+        plan: acc.plan, starting_balance: Number(acc.starting_balance),
+        balance: Number(acc.balance), leverage: acc.leverage,
+      });
+    }
+
+    // Otherwise find latest order and mint credentials instantly (no admin approval).
+    let order = (await db.from("orders").select("*").eq("user_id", user.id)
+      .order("created_at", { ascending: false }).limit(1).maybeSingle()).data as any;
+
+    // If no order exists at all, allow body to seed one (fallback).
+    if (!order) {
+      const b = await readJson(request);
+      if (!b?.plan) return json({ ok: false, error: "no_order" }, { status: 400 });
+      const ins = await db.from("orders").insert({
+        user_id: user.id, plan: b.plan, balance: b.balance,
+        price_usd: b.price_usd, network: b.network || "TRC20",
+        tx_hash: b.tx_hash || null, status: "pending_verification",
+      }).select("*").single();
+      order = ins.data;
+    }
+
+    const tradeId = randomTradeId();
+    const password = randomPassword(10);
+    const startingBalance = Number(String(order.balance || "10000").replace(/[^0-9.]/g, "")) || 10000;
+    const acc = await db.from("trade_accounts").insert({
+      user_id: user.id, order_id: order.id, trade_id: tradeId,
+      password_hash: await hashPassword(password), password_plain: password,
+      plan: order.plan || "Stellar 1",
+      starting_balance: startingBalance, balance: startingBalance, equity: startingBalance,
+      leverage: 100, status: "active",
+    }).select("*").single();
+    if (acc.error || !acc.data) return json({ ok: false, error: "issue_failed" }, { status: 500 });
+
+    await db.from("orders").update({ status: "approved" }).eq("id", order.id);
+    await db.from("deposits").update({
+      internal_status: "verified", verified_at: new Date().toISOString(),
+    }).eq("order_id", order.id);
+
+    // Fire-and-forget welcome email with credentials.
+    if (user.email) {
+      await sendEmail({
+        to: user.email,
+        subject: "Your GrowX trading account is ready",
+        html: `<div style="font-family:Inter,Arial,sans-serif">
+          <h2>Welcome, ${user.name || "Trader"}</h2>
+          <p>Your <b>${acc.data.plan}</b> account is live. Log in to the GrowX trading terminal with:</p>
+          <table style="background:#0b1220;color:#fff;padding:16px;border-radius:12px;font-size:16px">
+            <tr><td style="opacity:.7;padding:4px 12px">Trade ID</td><td style="padding:4px 12px"><b>${tradeId}</b></td></tr>
+            <tr><td style="opacity:.7;padding:4px 12px">Password</td><td style="padding:4px 12px"><b>${password}</b></td></tr>
+            <tr><td style="opacity:.7;padding:4px 12px">Starting Balance</td><td style="padding:4px 12px">$${startingBalance.toLocaleString()}</td></tr>
+            <tr><td style="opacity:.7;padding:4px 12px">Leverage</td><td style="padding:4px 12px">1:100</td></tr>
+          </table>
+          <p><a href="${url.origin}/trade-terminal-login.html" style="background:#2563eb;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:12px">Open Trading Terminal</a></p>
+        </div>`,
+      });
+      await db.from("trade_accounts").update({ credentials_emailed_at: new Date().toISOString() } as any).eq("id", acc.data.id);
+    }
+
+    return json({
+      ok: true, trade_id: tradeId, password,
+      plan: acc.data.plan, starting_balance: startingBalance,
+      balance: startingBalance, leverage: 100,
+    });
+  }
+
+  if (path === "/trade/send-credentials" && method === "POST") {
+    const user = await getUserFromRequest(request);
+    if (!user) return json({ ok: false, error: "unauthorized" }, { status: 401 });
+    const acc = (await db.from("trade_accounts").select("*").eq("user_id", user.id)
+      .order("created_at", { ascending: false }).limit(1).maybeSingle()).data as any;
+    if (!acc) return json({ ok: false, error: "no_account", message: "No trading account found." }, { status: 404 });
+    if (!user.email) return json({ ok: false, error: "no_email", message: "No email on file." }, { status: 400 });
+    const r = await sendEmail({
+      to: user.email,
+      subject: "Your GrowX trading credentials",
+      html: `<div style="font-family:Inter,Arial,sans-serif">
+        <h2>Your GrowX trading credentials</h2>
+        <table style="background:#0b1220;color:#fff;padding:16px;border-radius:12px;font-size:16px">
+          <tr><td style="opacity:.7;padding:4px 12px">Trade ID</td><td style="padding:4px 12px"><b>${acc.trade_id}</b></td></tr>
+          <tr><td style="opacity:.7;padding:4px 12px">Password</td><td style="padding:4px 12px"><b>${acc.password_plain}</b></td></tr>
+          <tr><td style="opacity:.7;padding:4px 12px">Starting Balance</td><td style="padding:4px 12px">$${Number(acc.starting_balance).toLocaleString()}</td></tr>
+          <tr><td style="opacity:.7;padding:4px 12px">Leverage</td><td style="padding:4px 12px">1:${acc.leverage}</td></tr>
+        </table>
+        <p><a href="${url.origin}/trade-terminal-login.html" style="background:#2563eb;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:12px">Open Trading Terminal</a></p>
+      </div>`,
+    });
+    if (r.ok) {
+      await db.from("trade_accounts").update({ credentials_emailed_at: new Date().toISOString() } as any).eq("id", acc.id);
+    }
+    return json({ ok: !!r.ok, message: r.ok ? "Credentials sent to " + user.email : "Failed to send email." });
+  }
+
+  if (path === "/trade/credentials-status" && method === "GET") {
+    const user = await getUserFromRequest(request);
+    if (!user) return json({ ok: false }, { status: 401 });
+    const acc = (await db.from("trade_accounts").select("credentials_emailed_at")
+      .eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle()).data as any;
+    return json({ ok: true, delivered: !!(acc && acc.credentials_emailed_at) });
+  }
+
   if (path === "/trade/login" && method === "POST") {
     const b = await readJson(request);
     const tradeId = String(b.trade_id || b.tradeId || "").toUpperCase().trim();
