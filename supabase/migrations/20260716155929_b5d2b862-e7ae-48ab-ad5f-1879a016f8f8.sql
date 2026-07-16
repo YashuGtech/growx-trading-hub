@@ -1,0 +1,1 @@
+ALTER TABLE public.trade_accounts ADD COLUMN IF NOT EXISTS credentials_emailed_at timestamptz;

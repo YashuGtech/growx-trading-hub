@@ -513,6 +513,7 @@ export type Database = {
         Row: {
           balance: number
           created_at: string
+          credentials_emailed_at: string | null
           equity: number
           id: number
           last_seen_at: string | null
@@ -530,6 +531,7 @@ export type Database = {
         Insert: {
           balance?: number
           created_at?: string
+          credentials_emailed_at?: string | null
           equity?: number
           id?: number
           last_seen_at?: string | null
@@ -547,6 +549,7 @@ export type Database = {
         Update: {
           balance?: number
           created_at?: string
+          credentials_emailed_at?: string | null
           equity?: number
           id?: number
           last_seen_at?: string | null
