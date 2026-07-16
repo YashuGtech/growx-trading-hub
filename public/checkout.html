@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span>Funded<span class="text-grad-gold">NXT</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="accounts.html" class="active">Accounts</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+    <button class="nav-burger" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Stepper -->
+<section style="padding:140px 0 30px;">
+  <div class="container">
+    <div class="stepper">
+      <div class="step active">
+        <div class="step-circle">1</div>
+        <div class="step-label">Conditions</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-label">Payment</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-label">Verify</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-label">Credentials</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Account Summary + Conditions -->
+<section class="section-sm">
+  <div class="container" style="max-width:880px;">
+
+    <div class="text-center reveal" style="margin-bottom:36px;">
+      <h1 class="h-1" style="margin-bottom:12px;">Review <span class="text-grad-gold">conditions</span></h1>
+      <p class="lead" style="margin:0 auto;">Before we proceed to payment, please review each condition of your selected funded account below, then accept them in one click.</p>
+    </div>
+
+    <!-- Account Summary -->
+    <div class="glass-strong reveal" id="account-summary" style="padding:24px 28px;border-radius:18px;margin-bottom:32px;"></div>
+
+    <!-- Conditions (info blocks, no individual checkboxes) -->
+    <div class="reveal delay-1">
+      <h3 class="h-3" style="margin-bottom:20px;">Account <span class="text-grad-gold">conditions</span>:</h3>
+
+      <div class="info-block">
+        <div class="num-badge">1</div>
+        <div class="info-text">
+          <strong>One-Time Activation Fee</strong>
+          The fee for this account (<span id="fee-display" class="text-grad-gold">$—</span>) is paid once and is non-refundable after credentials are issued.
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="num-badge">2</div>
+        <div class="info-text">
+          <strong>Profit Target &amp; Drawdown Rules</strong>
+          Follow the daily drawdown limit (<span id="dd-daily" class="text-grad-gold">—</span>) and total drawdown limit (<span id="dd-total" class="text-grad-gold">—</span>) for your selected tier.
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="num-badge">3</div>
+        <div class="info-text">
+          <strong>Risk Management Compliance</strong>
+          Use responsible risk management, avoid excessive lot sizing, and respect the trading rules during the challenge phase and funded phase.
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="num-badge">4</div>
+        <div class="info-text">
+          <strong>Payment via USDT</strong>
+          Pay the activation fee in USDT only. Payments are accepted on TRC20, ERC20, BEP20, Polygon, Arbitrum, and Solana networks.
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="num-badge">5</div>
+        <div class="info-text">
+          <strong>24-Hour Verification</strong>
+          After payment submission, credentials are delivered within 24 hours. Final account setup is performed by the Growx team.
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="num-badge">6</div>
+        <div class="info-text">
+          <strong>Terms of Service</strong>
+          You must accept the full <a href="terms.html" style="color:var(--accent-gold);text-decoration:underline;">Terms of Service</a>, payout policy, and code of conduct.
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue Button -->
+    <div class="text-center mt-lg reveal delay-2">
+      <button id="continue-btn" class="btn btn-gold btn-lg" disabled style="opacity:0.5;cursor:not-allowed;">
+        Continue to Payment →
+      </button>
+      <div style="color:var(--text-muted);font-size:0.85rem;margin-top:14px;">
+        Tick the agreement below to enable Continue.
+      </div>
+      <a href="accounts.html" style="display:inline-block;margin-top:24px;color:var(--text-muted);font-size:0.9rem;">← Back to Accounts</a>
+    </div>
+
+    <!-- Aggregate T&C — placed BELOW the Continue button -->
+    <label for="agree-all" class="agreement-card reveal delay-3" style="display:flex;align-items:flex-start;gap:14px;padding:20px 24px;background:rgba(37, 99, 235, 0.06);border:1px solid var(--border-glow);border-radius:var(--r-md);cursor:pointer;max-width:620px;margin:28px auto 0;text-align:left;transition:all .2s;">
+      <input type="checkbox" id="agree-all" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#2563eb;cursor:pointer;" />
+      <span class="agreement-text" style="font-size:0.95rem;color:var(--text-primary);line-height:1.55;">
+        I agree to the <a href="terms.html" style="color:var(--accent-gold);text-decoration:underline;font-weight:600;">Terms of Service</a>, drawdown rules, payment policy, and all 6 conditions stated above.
+      </span>
+    </label>
+
+  </div>
+</section>
+
+<script>
+// Inject dynamic data into conditions
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = localStorage.getItem('fnx_plan') || params.get('plan') || 'Stellar 1';
+  const price = localStorage.getItem('fnx_price') || params.get('price') || '159';
+  const ddMap = {
+    'Lite': ['5%', '10%'],
+    'Stellar 1': ['4%', '8%'],
+    'Stellar 2': ['4%', '8%'],
+    'Orion Prime': ['3%', '6%'],
+    'Nebula Pro': ['3%', '6%'],
+    'Apex': ['2.5%', '5%'],
+    'Quantum': ['2%', '4%']
+  };
+  const dd = ddMap[plan] || ['4%', '8%'];
+  const feeEl = document.getElementById('fee-display');
+  const dailyEl = document.getElementById('dd-daily');
+  const totalEl = document.getElementById('dd-total');
+  if (feeEl) feeEl.textContent = '$' + price;
+  if (dailyEl) dailyEl.textContent = dd[0];
+  if (totalEl) totalEl.textContent = dd[1];
+})();
+</script>
+<script src="assets/js/reporter.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+</body>
+</html>

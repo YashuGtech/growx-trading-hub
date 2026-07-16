@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administrator Console — Growx</title>
+  <meta name="description" content="Growx Administrator Console — full platform control: users, accounts, KYC, finance, analytics, audit." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/manager.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <!-- Chart.js for dashboard visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin-mode">
+
+<!-- =================== TOP ADMIN BAR =================== -->
+<header class="adm-topbar">
+  <div class="brand">
+    <span class="brand-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </span>
+    <span>Funded<span style="background:var(--grad-purple);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;">NXT</span></span>
+    <span class="brand-pill">
+      <span class="live-dot"></span>
+      Admin Console
+    </span>
+  </div>
+
+  <div class="global-search">
+    <svg class="gs-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="global-search-input" placeholder="Search users, transactions, KYC, accounts…" />
+    <span class="gs-kbd">⌘K</span>
+  </div>
+
+  <button class="icon-btn" id="cmd-k-btn" title="Command palette (⌘K)" aria-label="Command palette">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+  </button>
+  <button class="icon-btn" id="noti-btn" title="Notifications">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span class="badge-dot" id="noti-badge"></span>
+  </button>
+  <button class="icon-btn" id="print-btn" title="Print / Export PDF">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+  </button>
+  <a href="manager.html" class="icon-btn" title="Open manager console" aria-label="Manager">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </a>
+  <a href="home.html" class="icon-btn" title="Open public site" aria-label="Public site" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="2"/></svg>
+  </a>
+
+  <div class="adm-pill">
+    <span class="avatar">DA</span>
+    <span>Dana A.</span>
+    <span class="level">L5 Superadmin</span>
+  </div>
+</header>
+
+<div class="adm-layout">
+
+  <!-- ======================= SIDEBAR ======================= -->
+  <aside class="adm-side">
+
+    <div class="adm-acc open" data-acc="overview">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </span>
+        <span>Overview</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item active" data-pane="dashboard">
+          <span>Dashboard</span>
+          <span class="sub-badge" id="cnt-overview">live</span>
+        </div>
+        <div class="adm-nav-item" data-pane="notifications">
+          <span>Notifications &amp; Announcements</span>
+          <span class="sub-badge" id="cnt-noti">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="adm-acc" data-acc="users">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span>Users</span>
+        <span class="acc-count" id="users-count">0</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item" data-pane="all-users"><span>All Users (A–Z)</span></div>
+        <div class="adm-nav-item" data-pane="user-profiles"><span>User Profiles</span></div>
+        <div class="adm-nav-item" data-pane="user-search"><span>User Search &amp; Filters</span></div>
+        <div class="adm-nav-item" data-pane="suspend"><span>Suspend / Unsuspend</span><span class="sub-badge" id="cnt-suspended">0</span></div>
+        <div class="adm-nav-item" data-pane="freeze"><span>Freeze / Unfreeze</span><span class="sub-badge" id="cnt-frozen">0</span></div>
+        <div class="adm-nav-item" data-pane="reset-pw"><span>Reset User Password</span></div>
+        <div class="adm-nav-item" data-pane="login-activity"><span>Login Activity</span></div>
+        <div class="adm-nav-item" data-pane="user-analytics"><span>User Analytics</span></div>
+      </div>
+    </div>
+
+    <div class="adm-acc" data-acc="accounts">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        <span>Accounts</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item" data-pane="trading"><span>Trading Accounts</span><span class="sub-badge" id="cnt-trading">0</span></div>
+        <div class="adm-nav-item" data-pane="challenge"><span>Challenge Accounts</span><span class="sub-badge" id="cnt-challenge">0</span></div>
+        <div class="adm-nav-item" data-pane="funded"><span>Funded Accounts</span><span class="sub-badge" id="cnt-funded">0</span></div>
+        <div class="adm-nav-item" data-pane="challenge-approval"><span>Challenge Approval</span><span class="sub-badge" id="cnt-chal-app">0</span></div>
+        <div class="adm-nav-item" data-pane="funded-approval"><span>Funded Account Approval</span><span class="sub-badge" id="cnt-funded-app">0</span></div>
+        <div class="adm-nav-item" data-pane="trading-mgmt"><span>Trading Account Management</span></div>
+        <div class="adm-nav-item" data-pane="trading-reports"><span>Trading Reports</span></div>
+      </div>
+    </div>
+
+    <div class="adm-acc" data-acc="compliance">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <span>Compliance</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item" data-pane="kyc">
+          <span>KYC Management</span>
+          <span class="sub-badge" id="cnt-kyc">0</span>
+        </div>
+        <div class="adm-nav-item danger" data-pane="audit-logs"><span>Audit Logs</span><span class="sub-badge" id="cnt-audit">0</span></div>
+      </div>
+    </div>
+
+    <div class="adm-acc" data-acc="finance">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/></svg>
+        </span>
+        <span>Finance</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item" data-pane="txn-history"><span>Transaction History</span></div>
+        <div class="adm-nav-item" data-pane="depwd-overview"><span>Deposits &amp; Withdrawals</span></div>
+        <div class="adm-nav-item" data-pane="pending-payments"><span>Pending Payments</span><span class="sub-badge" id="cnt-pending-pay">0</span></div>
+        <div class="adm-nav-item" data-pane="revenue"><span>Revenue Dashboard</span></div>
+        <div class="adm-nav-item" data-pane="funds-collected"><span>Funds Collected</span></div>
+        <div class="adm-nav-item" data-pane="funds-distributed"><span>Funds Distributed</span></div>
+        <div class="adm-nav-item" data-pane="company-balance"><span>Current Company Balance</span></div>
+        <div class="adm-nav-item" data-pane="pnl"><span>Profit &amp; Loss Analytics</span></div>
+        <div class="adm-nav-item" data-pane="financial-reports"><span>Financial Reports</span></div>
+        <div class="adm-nav-item" data-pane="exports"><span>Export Reports (CSV/PDF)</span></div>
+      </div>
+    </div>
+
+    <div class="adm-acc" data-acc="system">
+      <div class="adm-acc-head">
+        <span class="acc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        <span>System</span>
+        <span class="acc-caret">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="adm-acc-body">
+        <div class="adm-nav-item" data-pane="activity"><span>Activity Logs</span></div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ======================= MAIN ======================= -->
+  <main class="adm-main">
+
+    <!-- ========== 1. DASHBOARD ========== -->
+    <section class="adm-pane active" data-pane-content="dashboard">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Administrator <span class="text-grad-gold" style="background:var(--grad-purple);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Dashboard</span><span class="head-tag">Live · <span id="dash-clock">--:--:--</span></span></h1>
+          <p class="lead">Realtime pulse of every user, account, payment, and risk signal across the Growx platform.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" id="dash-refresh"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
+          <button class="btn btn-ghost btn-sm" data-export="dashboard-csv"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M3 17v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/></svg> CSV</button>
+          <button class="btn btn-purple btn-sm" data-export="dashboard-pdf"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> PDF</button>
+        </div>
+      </div>
+
+      <!-- KPI grid (8 cards) -->
+      <div class="adm-kpi-grid" id="dash-kpis">
+        <div class="adm-kpi">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="adm-kpi-label">Total Users</div>
+          <div class="adm-kpi-value" id="kpi-users">0</div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta up">↑ 8.2%</span> vs last 30d</div>
+          <svg class="sparkline" viewBox="0 0 80 28" preserveAspectRatio="none"><polyline fill="none" stroke="#8b5cf6" stroke-width="2" points="0,22 8,20 16,18 24,16 32,14 40,12 48,10 56,8 64,6 72,5 80,3"/></svg>
+        </div>
+        <div class="adm-kpi k-gold">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="adm-kpi-label">Active Funded Accounts</div>
+          <div class="adm-kpi-value" id="kpi-funded">0</div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta up">↑ 14</span> this week</div>
+          <svg class="sparkline" viewBox="0 0 80 28" preserveAspectRatio="none"><polyline fill="none" stroke="#2563eb" stroke-width="2" points="0,20 8,19 16,17 24,18 32,14 40,12 48,11 56,10 64,7 72,6 80,4"/></svg>
+        </div>
+        <div class="adm-kpi">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div class="adm-kpi-label">Total Revenue (USDT)</div>
+          <div class="adm-kpi-value" id="kpi-revenue">$<span>0</span></div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta up">↑ 22%</span> MTD</div>
+          <svg class="sparkline" viewBox="0 0 80 28" preserveAspectRatio="none"><polyline fill="none" stroke="#8b5cf6" stroke-width="2" points="0,26 8,24 16,22 24,20 32,18 40,14 48,12 56,10 64,7 72,5 80,3"/></svg>
+        </div>
+        <div class="adm-kpi k-cyan">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+          <div class="adm-kpi-label">Pending Withdrawals</div>
+          <div class="adm-kpi-value" id="kpi-withdrawals">0</div>
+          <div class="adm-kpi-sub">$<span id="kpi-withdrawals-usd">0</span> USDT · 24h SLA</div>
+        </div>
+        <div class="adm-kpi k-emerald">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="adm-kpi-label">Challenges Passed (24h)</div>
+          <div class="adm-kpi-value" id="kpi-passed">0</div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta up">↑ 12</span> new funded</div>
+        </div>
+        <div class="adm-kpi k-pink">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="adm-kpi-label">KYC Pending Review</div>
+          <div class="adm-kpi-value" id="kpi-kyc">0</div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta down">↓ SLA 12h</span> 6 overdue</div>
+        </div>
+        <div class="adm-kpi k-pink">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="adm-kpi-label">Suspended Accounts</div>
+          <div class="adm-kpi-value" id="kpi-suspended">0</div>
+          <div class="adm-kpi-sub">+ <span id="kpi-frozen">0</span> frozen</div>
+        </div>
+        <div class="adm-kpi">
+          <div class="adm-kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="adm-kpi-label">Open Support Tickets</div>
+          <div class="adm-kpi-value" id="kpi-tickets">0</div>
+          <div class="adm-kpi-sub"><span class="adm-kpi-delta down">↓ 3</span> high priority</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-chart-wrap">
+          <div class="adm-card-head"><h3>Revenue vs Payouts (last 30 days)</h3><span class="sub">USDT settled</span></div>
+          <div class="adm-chart"><canvas id="chart-revenue"></canvas></div>
+        </div>
+        <div class="adm-chart-wrap">
+          <div class="adm-card-head"><h3>Account Status Distribution</h3><span class="sub">By type</span></div>
+          <div class="adm-chart-sm"><canvas id="chart-distribution"></canvas></div>
+        </div>
+      </div>
+
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-chart-wrap" style="grid-column: 1 / -1;">
+          <div class="adm-card-head"><h3>Daily Active Traders (last 14 days)</h3><span class="sub">Sessions per UTC day</span></div>
+          <div class="adm-chart"><canvas id="chart-active"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Quick actions + recent -->
+      <div class="adm-grid-3">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Most-used admin actions</h3><span class="sub">One click</span></div>
+          <div class="adm-quick-actions">
+            <div class="adm-quick" data-quick="approve-funded"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="meta"><div class="ti">Approve Funded</div><div class="de">9 pending review</div></div></div>
+            <div class="adm-quick" data-quick="verify-kyc"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2M15 12h2M7 16h10"/></svg></div><div class="meta"><div class="ti">Verify KYC</div><div class="de">7 awaiting docs</div></div></div>
+            <div class="adm-quick" data-quick="release-payouts"><div class="ic" style="background:var(--grad-gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="meta"><div class="ti">Release Payouts</div><div class="de">5 ready for batch</div></div></div>
+            <div class="adm-quick" data-quick="compose-announcement"><div class="ic" style="background:linear-gradient(135deg,#059669,#10b981);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div><div class="meta"><div class="ti">Compose Announcement</div><div class="de">Push to all users</div></div></div>
+            <div class="adm-quick" data-quick="run-report"><div class="ic" style="background:var(--grad-cyan);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div><div class="meta"><div class="ti">Run P&amp;L Report</div><div class="de">Generate &amp; export</div></div></div>
+            <div class="adm-quick" data-quick="audit-export"><div class="ic" style="background:linear-gradient(135deg,#be185d,#ec4899);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="meta"><div class="ti">Audit Export</div><div class="de">Compliance bundle</div></div></div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Recent admin actions</h3><span class="sub">Last 12 events</span></div>
+          <div class="adm-feed" id="dash-recent"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 2. NOTIFICATIONS & ANNOUNCEMENTS ========== -->
+    <section class="adm-pane" data-pane-content="notifications">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Notifications &amp; Announcements</h1>
+          <p class="lead">Push platform-wide messages, alerts, and updates to your entire user base or targeted segments.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-purple btn-sm" id="btn-new-announcement"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Compose</button>
+          <button class="btn btn-ghost btn-sm" data-export="noti-csv">Export CSV</button>
+        </div>
+      </div>
+      <div class="adm-grid-3">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Inbox</h3><span class="sub">System &amp; admin alerts</span></div>
+          <div class="adm-noti-list" id="noti-inbox"></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Announcement composer</h3><span class="sub">Drafts &amp; templates</span></div>
+          <div class="adm-quick-actions">
+            <div class="adm-quick" data-template="maintenance"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="meta"><div class="ti">Maintenance window</div><div class="de">Notify users of downtime</div></div></div>
+            <div class="adm-quick" data-template="new-feature"><div class="ic" style="background:var(--grad-cyan);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="meta"><div class="ti">New feature drop</div><div class="de">Highlight a release</div></div></div>
+            <div class="adm-quick" data-template="terms-update"><div class="ic" style="background:linear-gradient(135deg,#059669,#10b981);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg></div><div class="meta"><div class="ti">Terms update</div><div class="de">Compliance change</div></div></div>
+            <div class="adm-quick" data-template="market-alert"><div class="ic" style="background:linear-gradient(135deg,#be185d,#ec4899);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="meta"><div class="ti">Market alert</div><div class="de">High-impact news window</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. ALL USERS (A–Z) ========== -->
+    <section class="adm-pane" data-pane-content="all-users">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>All Users <span class="head-tag"><span id="all-users-count">0</span> total</span></h1>
+          <p class="lead">Sorted alphabetically. Click a row to open the user profile drawer with full context.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" data-export="users-csv">CSV</button>
+          <button class="btn btn-ghost btn-sm" data-export="users-pdf">PDF</button>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="all-users" data-filter="status">
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="frozen">Frozen</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" data-filter-table="all-users" data-filter="tier">
+            <option value="">All tiers</option>
+            <option value="Lite">Lite</option>
+            <option value="Stellar 1">Stellar 1</option>
+            <option value="Stellar 2">Stellar 2</option>
+            <option value="Orion Prime">Orion Prime</option>
+            <option value="Nebula Pro">Nebula Pro</option>
+            <option value="Apex">Apex</option>
+            <option value="Quantum">Quantum</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search name, email, country…" data-search-table="all-users" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-all-users"></table>
+      </div>
+    </section>
+
+    <!-- ========== 4. USER PROFILES ========== -->
+    <section class="adm-pane" data-pane-content="user-profiles">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>User Profiles</h1>
+          <p class="lead">Snapshots of identity, KYC status, account holdings, and lifetime activity for every signed-up user.</p>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="user-profiles" data-filter="kyc">
+            <option value="">All KYC states</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="unsubmitted">Not submitted</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search…" data-search-table="user-profiles" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-user-profiles"></table>
+      </div>
+    </section>
+
+    <!-- ========== 5. USER SEARCH & FILTERS ========== -->
+    <section class="adm-pane" data-pane-content="user-search">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>User Search &amp; Filters</h1>
+          <p class="lead">Advanced search across every user attribute — combine filters to drill in.</p>
+        </div>
+      </div>
+      <div class="adm-card" style="margin-bottom:20px;">
+        <div class="adm-card-head"><h3>Search criteria</h3><span class="sub">All fields can be combined</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+          <input class="input" id="adv-q-name" placeholder="Name contains…" />
+          <input class="input" id="adv-q-email" placeholder="Email contains…" />
+          <input class="input" id="adv-q-country" placeholder="Country…" />
+          <input class="input" id="adv-q-tier" placeholder="Tier (e.g. Stellar 2)…" />
+          <input class="input" id="adv-q-status" placeholder="Status (active/suspended…)" />
+          <input class="input" id="adv-q-balance" placeholder="Balance ≥" type="number" />
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="btn btn-purple btn-sm" id="adv-search-run">Search</button>
+          <button class="btn btn-ghost btn-sm" id="adv-search-reset">Reset</button>
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-user-search"></table>
+      </div>
+    </section>
+
+    <!-- ========== 6. SUSPEND / UNSUSPEND ========== -->
+    <section class="adm-pane" data-pane-content="suspend">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Suspend / Unsuspend Accounts</h1>
+          <p class="lead">Block or unblock platform access. Suspended users cannot log in, trade, or request payouts.</p>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <span class="adm-pill ap-suspended"><span id="suspend-active-count">0</span> suspended</span>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search user…" data-search-table="suspend" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-suspend"></table>
+      </div>
+    </section>
+
+    <!-- ========== 7. FREEZE / UNFREEZE ========== -->
+    <section class="adm-pane" data-pane-content="freeze">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Freeze / Unfreeze Accounts</h1>
+          <p class="lead">Lock trading operations while leaving login and KYC intact — used for risk review and payout holds.</p>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <span class="adm-pill ap-frozen"><span id="freeze-active-count">0</span> frozen</span>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search user…" data-search-table="freeze" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-freeze"></table>
+      </div>
+    </section>
+
+    <!-- ========== 8. RESET PASSWORD ========== -->
+    <section class="adm-pane" data-pane-content="reset-pw">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Reset User Password</h1>
+          <p class="lead">Generate a secure temporary password and email it to the user. Forces password change on next login.</p>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <span class="adm-pill ap-purple">Audit-tracked · <span id="rspw-today">0</span> resets today</span>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Find user to reset…" data-search-table="reset-pw" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-reset-pw"></table>
+      </div>
+    </section>
+
+    <!-- ========== 9. LOGIN ACTIVITY ========== -->
+    <section class="adm-pane" data-pane-content="login-activity">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Login Activity</h1>
+          <p class="lead">Realtime session log with IPs, devices, and country origin. Detect anomalies in seconds.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" data-export="logins-csv">CSV</button>
+        </div>
+      </div>
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Logins by hour (UTC, last 24h)</h3><span class="sub">Heat map density</span></div>
+          <div class="adm-heatmap" id="login-heatmap"></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Top login countries (24h)</h3><span class="sub">By session count</span></div>
+          <div id="login-countries"></div>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <input id="login-from" class="input" type="date" style="padding:9px 14px;font-size:0.85rem;width:auto;" />
+          <input id="login-to" class="input" type="date" style="padding:9px 14px;font-size:0.85rem;width:auto;" />
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Filter by email or IP…" data-search-table="login-activity" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-login-activity"></table>
+      </div>
+    </section>
+
+    <!-- ========== 10. USER ANALYTICS ========== -->
+    <section class="adm-pane" data-pane-content="user-analytics">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>User Analytics</h1>
+          <p class="lead">Cohort, retention, and tier distribution — the full user-funnel picture.</p>
+        </div>
+      </div>
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-chart-wrap" style="grid-column:1 / -1;">
+          <div class="adm-card-head"><h3>Signups last 60 days</h3><span class="sub">Daily cohort</span></div>
+          <div class="adm-chart"><canvas id="chart-signups"></canvas></div>
+        </div>
+      </div>
+      <div class="adm-grid-2-equal">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Users by tier</h3><span class="sub">Distribution</span></div>
+          <div class="adm-chart-sm"><canvas id="chart-tier"></canvas></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Top countries</h3><span class="sub">By registered user count</span></div>
+          <div id="users-by-country" class="adm-funnel" style="margin-top:8px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 11–13. TRADING / CHALLENGE / FUNDED ACCOUNTS (unified) ========== -->
+    <section class="adm-pane" data-pane-content="trading">
+      <div class="adm-page-head">
+        <div class="head-text">
+          <h1>Trading Accounts</h1>
+          <p class="lead">All MT5-tracked accounts across the platform.</p>
+        </div>
+      </div>
+      <div class="adm-tabs" id="acct-tabs">
+        <div class="adm-tab active" data-acct-tab="all">All</div>
+        <div class="adm-tab" data-acct-tab="challenge">Challenges</div>
+        <div class="adm-tab" data-acct-tab="funded">Funded</div>
+        <div class="adm-tab" data-acct-tab="breached">Breached</div>
+        <div class="adm-tab" data-acct-tab="inactive">Inactive</div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search user / login…" data-search-table="trading" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-trading"></table>
+      </div>
+    </section>
+
+    <section class="adm-pane" data-pane-content="challenge">
+      <div class="adm-page-head"><div class="head-text"><h1>Challenge Accounts</h1><p class="lead">Active 1-step challenge attempts — group by tier to see pass conversion rate.</p></div></div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="challenge" data-filter="tier">
+            <option value="">All tiers</option>
+            <option value="Lite">Lite</option><option value="Stellar 1">Stellar 1</option><option value="Stellar 2">Stellar 2</option>
+            <option value="Orion Prime">Orion Prime</option><option value="Nebula Pro">Nebula Pro</option>
+            <option value="Apex">Apex</option><option value="Quantum">Quantum</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search by user…" data-search-table="challenge" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-challenge"></table>
+      </div>
+    </section>
+
+    <section class="adm-pane" data-pane-content="funded">
+      <div class="adm-page-head"><div class="head-text"><h1>Funded Accounts</h1><p class="lead">All funded (Phase 2 + beyond) accounts — capital deployed, profit accrued, payouts.</p></div></div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <span class="adm-pill ap-emerald"><span id="funded-count">0</span> funded accounts</span>
+          <span class="adm-pill ap-gold">$<span id="funded-capital">0</span> deployed</span>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search…" data-search-table="funded" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-funded"></table>
+      </div>
+    </section>
+
+    <!-- ========== 14. CHALLENGE APPROVAL ========== -->
+    <section class="adm-pane" data-pane-content="challenge-approval">
+      <div class="adm-page-head"><div class="head-text"><h1>Challenge Approval Queue <span class="head-tag" style="color:var(--accent-emerald);border-color:rgba(16,185,129,0.45);background:rgba(16,185,129,0.12);"><span id="chal-app-count">0</span> awaiting review</span></h1><p class="lead">Approve or reject completed challenges. Decisions are final and trigger funding credentials.</p></div></div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-challenge-approval"></table>
+      </div>
+    </section>
+
+    <!-- ========== 15. FUNDED APPROVAL ========== -->
+    <section class="adm-pane" data-pane-content="funded-approval">
+      <div class="adm-page-head"><div class="head-text"><h1>Funded Account Approval <span class="head-tag" style="color:var(--accent-cyan);border-color:rgba(6,212,255,0.45);background:rgba(6,212,255,0.12);"><span id="funded-app-count">0</span> in queue</span></h1><p class="lead">Open funded accounts for new users. Risk profile and KYC must both be green.</p></div></div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-funded-approval"></table>
+      </div>
+    </section>
+
+    <!-- ========== 16. TRADING ACCOUNT MANAGEMENT ========== -->
+    <section class="adm-pane" data-pane-content="trading-mgmt">
+      <div class="adm-page-head"><div class="head-text"><h1>Trading Account Management</h1><p class="lead">Bulk adjust leverage, reset daily DD, swap MT5 credentials, change account tier.</p></div></div>
+      <div class="adm-quick-actions" style="margin-bottom:18px;">
+        <div class="adm-quick" data-bulk="reissue-mt5"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/></svg></div><div class="meta"><div class="ti">Re-issue MT5 credentials</div><div class="de">Bulk for selected</div></div></div>
+        <div class="adm-quick" data-bulk="set-leverage"><div class="ic" style="background:linear-gradient(135deg,#059669,#10b981);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="meta"><div class="ti">Adjust leverage</div><div class="de">1:30 — 1:200 per tier</div></div></div>
+        <div class="adm-quick" data-bulk="reset-dd"><div class="ic" style="background:linear-gradient(135deg,#be185d,#ec4899);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div><div class="meta"><div class="ti">Reset daily DD</div><div class="de">Once per cycle</div></div></div>
+        <div class="adm-quick" data-bulk="reassign-tier"><div class="ic" style="background:var(--grad-cyan);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div><div class="meta"><div class="ti">Reassign tier</div><div class="de">Promote or downgrade</div></div></div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-trading-mgmt"></table>
+      </div>
+    </section>
+
+    <!-- ========== 17. TRADING REPORTS ========== -->
+    <section class="adm-pane" data-pane-content="trading-reports">
+      <div class="adm-page-head"><div class="head-text"><h1>Trading Reports</h1><p class="lead">Per-account metrics: volume, win rate, drawdown, profit factor.</p></div></div>
+      <div class="adm-grid-3">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Volume leaderboard</h3><span class="sub">Lots traded (30d)</span></div>
+          <div id="volume-leader"></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Profit factor distribution</h3><span class="sub">PF across Tier</span></div>
+          <div class="adm-chart-sm"><canvas id="chart-pf"></canvas></div>
+        </div>
+      </div>
+      <div class="adm-grid-3" style="margin-top:22px;">
+        <div class="adm-card" style="grid-column:1 / -1;">
+          <div class="adm-card-head"><h3>Top traders</h3><span class="sub">Sorted by realized profit</span></div>
+          <div class="adm-table-wrap" style="border:none;background:transparent;display:block;">
+            <table class="adm-table" id="tbl-trading-reports"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 18. KYC MANAGEMENT ========== -->
+    <section class="adm-pane" data-pane-content="kyc">
+      <div class="adm-page-head"><div class="head-text"><h1>KYC Management <span class="head-tag" style="color:var(--accent-pink);border-color:rgba(236,72,153,0.45);background:rgba(236,72,153,0.12);"><span id="kyc-count">0</span> pending</span></h1><p class="lead">Review submitted identity documents. Approve to unlock payouts, reject to refund.</p></div></div>
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>KYC funnel</h3><span class="sub">Approved · Rejected · Pending</span></div>
+          <div class="adm-funnel" id="kyc-funnel"></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Avg review time</h3><span class="sub">Last 30d</span></div>
+          <div style="text-align:center;padding:32px 0;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;background:var(--grad-purple);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">4.7h</div>
+            <div style="color:var(--text-muted);font-size:0.85rem;margin-top:6px;">SLA target 12h · <span style="color:var(--accent-emerald);font-weight:700;">PASS</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="kyc" data-filter="status">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" data-filter-table="kyc" data-filter="doc">
+            <option value="">All doc types</option>
+            <option value="passport">Passport</option>
+            <option value="id_card">ID card</option>
+            <option value="drivers">Driver's license</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search by name or doc #…" data-search-table="kyc" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-kyc"></table>
+      </div>
+    </section>
+
+    <!-- ========== 19. AUDIT LOGS ========== -->
+    <section class="adm-pane" data-pane-content="audit-logs">
+      <div class="adm-page-head"><div class="head-text"><h1>Audit Logs <span class="head-tag" style="color:var(--accent-pink);border-color:rgba(236,72,153,0.45);background:rgba(236,72,153,0.12);">Compliance</span></h1><p class="lead">Tamper-evident log of every admin action — exportable for regulator audit.</p></div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" data-export="audit-csv">CSV</button>
+          <button class="btn btn-ghost btn-sm" data-export="audit-pdf">PDF</button>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="audit-logs" data-filter="level">
+            <option value="">All levels</option>
+            <option value="info">Info</option><option value="warn">Warn</option>
+            <option value="error">Error</option><option value="critical">Critical</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" data-filter-table="audit-logs" data-filter="actor">
+            <option value="">All actors</option>
+            <option value="admin">Admin</option><option value="system">System</option><option value="user">User</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search action / target…" data-search-table="audit-logs" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-audit-logs"></table>
+      </div>
+    </section>
+
+    <!-- ========== 20. TRANSACTION HISTORY ========== -->
+    <section class="adm-pane" data-pane-content="txn-history">
+      <div class="adm-page-head"><div class="head-text"><h1>Transaction History</h1><p class="lead">All deposits, withdrawals, refunds in one chronological feed.</p></div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" data-export="txn-csv">CSV</button>
+          <button class="btn btn-ghost btn-sm" data-export="txn-pdf">PDF</button>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="txn-history" data-filter="kind">
+            <option value="">All kinds</option>
+            <option value="deposit">Deposits</option>
+            <option value="withdrawal">Withdrawals</option>
+            <option value="refund">Refunds</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" data-filter-table="txn-history" data-filter="status">
+            <option value="">All statuses</option>
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select class="btn btn-ghost btn-sm" data-filter-table="txn-history" data-filter="network">
+            <option value="">All networks</option>
+            <option value="TRC20">TRC20</option>
+            <option value="ERC20">ERC20</option>
+            <option value="BEP20">BEP20</option>
+            <option value="Polygon">Polygon</option>
+            <option value="Arbitrum">Arbitrum</option>
+            <option value="Solana">Solana</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search email / hash / amount…" data-search-table="txn-history" />
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-txn-history"></table>
+      </div>
+    </section>
+
+    <!-- ========== 21. DEPOSITS & WITHDRAWALS OVERVIEW ========== -->
+    <section class="adm-pane" data-pane-content="depwd-overview">
+      <div class="adm-page-head"><div class="head-text"><h1>Deposits &amp; Withdrawals</h1><p class="lead">Inbound and outbound flows side-by-side.</p></div></div>
+      <div class="adm-grid-3">
+        <div class="adm-pnl-grid" style="grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="adm-pnl-tile"><div class="lab">Deposits (verified)</div><div class="val pos">$<span id="dw-deposits-usd">0</span></div><div class="sub"><span id="dw-deposits-count">0</span> txns · last 30d</div></div>
+          <div class="adm-pnl-tile"><div class="lab">Withdrawals (paid)</div><div class="val neg">$<span id="dw-withdrawals-usd">0</span></div><div class="sub"><span id="dw-withdrawals-count">0</span> txns · last 30d</div></div>
+          <div class="adm-pnl-tile"><div class="lab">Net flow</div><div class="val pos">+$<span id="dw-net">0</span></div><div class="sub">Inflow - Outflow</div></div>
+          <div class="adm-pnl-tile"><div class="lab">Avg ticket (deposit)</div><div class="val">$<span id="dw-avg-deposit">0</span></div><div class="sub">USDT avg</div></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Daily flow (last 30d)</h3><span class="sub">USDT</span></div>
+          <div class="adm-chart-sm"><canvas id="chart-flow"></canvas></div>
+        </div>
+      </div>
+      <div class="adm-grid-2-equal" style="margin-top:22px;">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Deposits</h3><span class="sub">Latest</span></div>
+          <table class="adm-table" id="tbl-deposits-overview"></table>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Withdrawals</h3><span class="sub">Latest</span></div>
+          <table class="adm-table" id="tbl-withdrawals-overview"></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 22. PENDING PAYMENTS ========== -->
+    <section class="adm-pane" data-pane-content="pending-payments">
+      <div class="adm-page-head"><div class="head-text"><h1>Pending Payments <span class="head-tag" style="color:#fbbf24;border-color:rgba(245,158,11,0.45);background:rgba(245,158,11,0.12);"><span id="pending-pay-count">0</span> queue</span></h1><p class="lead">Deposits awaiting verification. Verify or reject to release funds.</p></div></div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-pending-payments"></table>
+      </div>
+    </section>
+
+    <!-- ========== 23. REVENUE DASHBOARD ========== -->
+    <section class="adm-pane" data-pane-content="revenue">
+      <div class="adm-page-head"><div class="head-text"><h1>Revenue Dashboard</h1><p class="lead">Deposit revenue streams by tier and network.</p></div></div>
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Total revenue (all-time)</h3><span class="sub">USDT</span></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;background:var(--grad-purple);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:14px;">$<span id="rev-total">0</span></div>
+          <div style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;">Across <span id="rev-deposits">0</span> deposits</div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>MRR (monthly settled)</h3><span class="sub">USDT</span></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:14px;">$<span id="rev-mrr">0</span></div>
+          <div style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;"><span class="adm-pill ap-emerald" style="padding:2px 8px;font-size:0.7rem;">↑ 22% MoM</span></div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>ARPU (avg. revenue per user)</h3><span class="sub">Lifetime</span></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;background:var(--grad-cyan);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:14px;">$<span id="rev-arpu">0</span></div>
+          <div style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;">vs target $250</div>
+        </div>
+      </div>
+      <div class="adm-grid-3">
+        <div class="adm-chart-wrap">
+          <div class="adm-card-head"><h3>Revenue by tier</h3><span class="sub">Stacked</span></div>
+          <div class="adm-chart"><canvas id="chart-rev-tier"></canvas></div>
+        </div>
+        <div class="adm-chart-wrap">
+          <div class="adm-card-head"><h3>Revenue by network</h3><span class="sub">Last 90d</span></div>
+          <div class="adm-chart"><canvas id="chart-rev-network"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 24. FUNDS COLLECTED ========== -->
+    <section class="adm-pane" data-pane-content="funds-collected">
+      <div class="adm-page-head"><div class="head-text"><h1>Funds Collected</h1><p class="lead">All inbound money flow — by user, by tier, by day.</p></div></div>
+      <div class="adm-grid-2-equal" style="margin-bottom:22px;">
+        <div class="adm-pnl-tile" style="padding:24px;">
+          <div class="lab">Total collected (verified)</div>
+          <div class="val pos">+$<span id="fc-total">0</span></div>
+          <div class="sub">Across <span id="fc-count">0</span> deposits — last 90d</div>
+        </div>
+        <div class="adm-pnl-tile" style="padding:24px;">
+          <div class="lab">Projected (pending verification)</div>
+          <div class="val" style="color:#fbbf24;">+$<span id="fc-projected">0</span></div>
+          <div class="sub">Awaiting admin verification</div>
+        </div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-funds-collected"></table>
+      </div>
+    </section>
+
+    <!-- ========== 25. FUNDS DISTRIBUTED ========== -->
+    <section class="adm-pane" data-pane-content="funds-distributed">
+      <div class="adm-page-head"><div class="head-text"><h1>Funds Distributed</h1><p class="lead">Payouts + commissions + refunds.</p></div></div>
+      <div class="adm-grid-3" style="margin-bottom:22px;">
+        <div class="adm-pnl-tile"><div class="lab">Payouts to traders</div><div class="val neg">-$<span id="fd-payouts">0</span></div><div class="sub">Last 90d</div></div>
+        <div class="adm-pnl-tile"><div class="lab">Refunds issued</div><div class="val neg">-$<span id="fd-refunds">0</span></div><div class="sub">Last 90d</div></div>
+        <div class="adm-pnl-tile"><div class="lab">Net distributed</div><div class="val neg">-$<span id="fd-total">0</span></div><div class="sub">Outflow total</div></div>
+      </div>
+      <div class="adm-table-wrap">
+        <table class="adm-table" id="tbl-funds-distributed"></table>
+      </div>
+    </section>
+
+    <!-- ========== 26. COMPANY BALANCE ========== -->
+    <section class="adm-pane" data-pane-content="company-balance">
+      <div class="adm-page-head"><div class="head-text"><h1>Current Company Balance</h1><p class="lead">Real-time treasury view across all wallets, aggregated daily.</p></div></div>
+      <div class="adm-grid-2-equal" style="margin-bottom:22px;">
+        <div class="adm-pnl-tile" style="padding:30px;">
+          <div class="lab">Total company balance</div>
+          <div class="val pos">$<span id="cb-total">0</span> <span style="font-size:0.6em;color:var(--text-muted);font-family:'Inter',sans-serif;letter-spacing:0.05em;">USDT</span></div>
+          <div class="sub">Across 6 networks</div>
+        </div>
+        <div class="adm-pnl-tile" style="padding:30px;">
+          <div class="lab">User-held balances</div>
+          <div class="val">$<span id="cb-userheld">0</span></div>
+          <div class="sub">In user funding pools</div>
+        </div>
+      </div>
+      <div class="adm-grid-3">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>Network breakdown</h3><span class="sub">USDT held</span></div>
+          <div id="cb-network-list"></div>
+        </div>
+        <div class="adm-card" style="grid-column: 2 / -1;">
+          <div class="adm-card-head"><h3>Daily treasury chart</h3><span class="sub">Last 30d</span></div>
+          <div class="adm-chart"><canvas id="chart-treasury"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 27. P&L ANALYTICS ========== -->
+    <section class="adm-pane" data-pane-content="pnl">
+      <div class="adm-page-head"><div class="head-text"><h1>Profit &amp; Loss Analytics</h1><p class="lead">Gross revenue, gross payouts, net P&amp;L by period.</p></div>
+      <div class="adm-grid-2-equal" style="margin-bottom:22px;">
+        <div class="adm-pnl-tile" style="padding:24px;"><div class="lab">Gross revenue (30d)</div><div class="val pos">$<span id="pnl-rev">0</span></div><div class="sub">From deposits</div></div>
+        <div class="adm-pnl-tile" style="padding:24px;"><div class="lab">Gross payouts (30d)</div><div class="val neg">$<span id="pnl-pay">0</span></div><div class="sub">To traders + refunds</div></div>
+      </div>
+      <div class="adm-grid-3">
+        <div class="adm-pnl-tile" style="padding:32px;text-align:center;background:linear-gradient(160deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.4);">
+          <div class="lab">Net P&amp;L (30d)</div>
+          <div class="val pos" style="font-size:3rem;">+$<span id="pnl-net">0</span></div>
+          <div class="sub" style="margin-top:10px;"><span class="adm-pill ap-emerald">↑ 28% MoM</span></div>
+        </div>
+        <div class="adm-chart-wrap" style="grid-column: 2 / -1;">
+          <div class="adm-card-head"><h3>Revenue vs Payouts — last 90 days</h3><span class="sub">Net P&amp;L shaded</span></div>
+          <div class="adm-chart"><canvas id="chart-pnl"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 28. FINANCIAL REPORTS ========== -->
+    <section class="adm-pane" data-pane-content="financial-reports">
+      <div class="adm-page-head"><div class="head-text"><h1>Financial Reports</h1><p class="lead">Operational summary across deposits, payouts, KYC funnel.</p></div>
+        <div class="head-actions">
+          <select class="btn btn-ghost btn-sm" id="fin-rpt-kind">
+            <option value="deposits_summary">Deposits Summary</option>
+            <option value="withdrawals_summary">Withdrawals Summary</option>
+            <option value="refunds_summary">Refunds Summary</option>
+            <option value="pnl_by_tier">P&amp;L by Tier</option>
+          </select>
+        </div>
+      </div>
+      <div class="adm-card">
+        <div class="adm-card-head"><h3 id="fin-rpt-title">Deposits Summary</h3><span class="sub">Generated live from the database</span></div>
+        <table class="adm-table" id="tbl-financial-reports"></table>
+      </div>
+    </section>
+
+    <!-- ========== 29. EXPORT REPORTS ========== -->
+    <section class="adm-pane" data-pane-content="exports">
+      <div class="adm-page-head"><div class="head-text"><h1>Export Reports</h1><p class="lead">Generate CSV bundles or printable PDF snapshots for compliance, internal review, or partners.</p></div></div>
+      <div class="adm-grid-2-equal">
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>One-click CSV exports</h3><span class="sub">In-browser, no server roundtrip</span></div>
+          <div class="adm-quick-actions">
+            <div class="adm-quick" data-export="users-csv"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="meta"><div class="ti">Users CSV</div><div class="de">All profiles, A–Z</div></div></div>
+            <div class="adm-quick" data-export="txn-csv"><div class="ic" style="background:var(--grad-gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="7 10 12 15 17 10"/></svg></div><div class="meta"><div class="ti">Transactions CSV</div><div class="de">All deposits, withdrawals, refunds</div></div></div>
+            <div class="adm-quick" data-export="audit-csv"><div class="ic" style="background:linear-gradient(135deg,#be185d,#ec4899);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="7 10 12 15 17 10"/></svg></div><div class="meta"><div class="ti">Audit log CSV</div><div class="de">Compliance bundle</div></div></div>
+            <div class="adm-quick" data-export="kyc-csv"><div class="ic" style="background:linear-gradient(135deg,#059669,#10b981);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="7 10 12 15 17 10"/></svg></div><div class="meta"><div class="ti">KYC CSV</div><div class="de">Submissions &amp; decisions</div></div></div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-head"><h3>PDF print snapshots</h3><span class="sub">native browser print (no library)</span></div>
+          <div class="adm-quick-actions">
+            <div class="adm-quick" data-export="dashboard-pdf"><div class="ic" style="background:var(--grad-purple);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="meta"><div class="ti">Print Dashboard</div><div class="de">Current state, optimized for A4</div></div></div>
+            <div class="adm-quick" data-export="users-pdf"><div class="ic" style="background:var(--grad-cyan);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div class="meta"><div class="ti">Print Users</div><div class="de">All users list</div></div></div>
+            <div class="adm-quick" data-export="txn-pdf"><div class="ic" style="background:linear-gradient(135deg,#be185d,#ec4899);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div class="meta"><div class="ti">Print Transactions</div><div class="de">Chronological feed</div></div></div>
+            <div class="adm-quick" data-export="audit-pdf"><div class="ic" style="background:linear-gradient(135deg,#059669,#10b981);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div class="meta"><div class="ti">Print Audit Logs</div><div class="de">Compliance snapshot</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 30. ACTIVITY LOGS ========== -->
+    <section class="adm-pane" data-pane-content="activity">
+      <div class="adm-page-head"><div class="head-text"><h1>Activity Logs</h1><p class="lead">Every action from the platform and every admin decision — replays, audits, forensically sound.</p></div>
+        <div class="head-actions">
+          <button class="btn btn-ghost btn-sm" data-export="activity-csv">CSV</button>
+        </div>
+      </div>
+      <div class="adm-toolbar">
+        <div class="tb-filters">
+          <select class="btn btn-ghost btn-sm" data-filter-table="activity" data-filter="actor">
+            <option value="">All actors</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <div class="tb-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" placeholder="Search action / target…" data-search-table="activity" />
+        </div>
+      </div>
+      <div class="adm-feed" id="activity-feed"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ======================= USER PROFILE DRAWER ======================= -->
+<aside class="adm-drawer" id="user-drawer" aria-hidden="true">
+  <header>
+    <h2>User Profile <span class="tag">ID #<span id="ud-id">—</span></span></h2>
+    <button class="icon-btn" id="ud-close" title="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </header>
+  <div class="body" id="ud-body"></div>
+</aside>
+
+<!-- ======================= MODAL ======================= -->
+<div class="adm-modal-overlay" id="modal" aria-hidden="true">
+  <div class="adm-modal">
+    <div class="adm-modal-head">
+      <div>
+        <h3 id="modal-title">Action</h3>
+        <p id="modal-sub">Confirm this change.</p>
+      </div>
+      <button class="adm-modal-close" id="modal-close">×</button>
+    </div>
+    <div class="adm-modal-body" id="modal-body"></div>
+    <div class="adm-modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- ======================= COMMAND PALETTE ======================= -->
+<div class="adm-cmdoverlay" id="cmdk" aria-hidden="true">
+  <div class="adm-cmd">
+    <input id="cmd-input" placeholder="Jump to a feature, user, or action… (Esc to close)" />
+    <div class="adm-cmd-list" id="cmd-list"></div>
+  </div>
+</div>
+
+<!-- ======================= TOASTS ======================= -->
+<div class="adm-toasts" id="toasts"></div>
+
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support & Payments Manager — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta name="fnx-api-base" content="http://localhost:8766" />
+  <script>window.__FNX_API_BASE__ = 'http://localhost:8766';</script>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+  <link rel="stylesheet" href="assets/css/manager.css" />
+</head>
+<body class="manager-mode">
+
+<!-- Top action bar -->
+<header class="mgr-topbar">
+  <div class="brand">
+    <span class="brand-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
+      </svg>
+    </span>
+    <span>Growx <span style="color:var(--accent-purple-soft);font-weight:600;">Manager</span></span>
+    <span class="user-pill" style="margin-left:14px;">
+      <span class="dot"></span>
+      <span id="live-status">Live</span>
+      <span style="color:var(--text-muted);">·</span>
+      <span id="live-time">--:--:--</span>
+    </span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="icon-btn" title="Refresh" id="refresh-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+    <a href="home.html" class="icon-btn" title="Open public site" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+    <div style="position:relative;">
+      <button class="icon-btn" id="notif-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="icon-count" id="notif-count" style="display:none;">0</span>
+      </button>
+    </div>
+    <div class="user-pill">
+      <span class="dot" style="background:var(--accent-purple);box-shadow:0 0 8px var(--accent-purple);"></span>
+      <span>Maya R.</span>
+      <span style="color:var(--text-muted);">·</span>
+      <span style="color:var(--accent-purple-soft);">L3 Admin</span>
+    </div>
+  </div>
+</header>
+
+<div class="mgr-layout">
+
+  <!-- Sidebar -->
+  <aside class="mgr-side">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" data-pane="dash">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+      <span class="badge" id="live-badge">live</span>
+    </div>
+
+    <div class="nav-section">Payments</div>
+    <div class="nav-item" data-pane="deposits">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <span>User Deposits</span>
+      <span class="badge" data-counter="deposits_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="withdrawals">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      <span>Withdrawal Requests</span>
+      <span class="badge" data-counter="withdrawals_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="verify">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Payment Verification</span>
+      <span class="badge" data-counter="deposits_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="refunds">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      <span>Refund Management</span>
+      <span class="badge" data-counter="refunds_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="payments">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/></svg>
+      <span>Payment History</span>
+    </div>
+    <div class="nav-item danger-element" data-pane="reports">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+      <span>Financial Reports</span>
+    </div>
+
+    <div class="nav-section">Support</div>
+    <div class="nav-item" data-pane="tickets">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Support Tickets</span>
+      <span class="badge" data-counter="tickets_open">0</span>
+    </div>
+    <div class="nav-item" data-pane="complaints">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>User Complaints</span>
+      <span class="badge" data-counter="complaints_open">0</span>
+    </div>
+    <div class="nav-item" data-pane="kyc">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2M15 12h2M7 16h10"/></svg>
+      <span>KYC Verification</span>
+      <span class="badge" data-counter="kyc_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="comms">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span>User Communication</span>
+    </div>
+    <div class="nav-item" data-pane="emails">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Email Notifications</span>
+      <span class="badge" data-counter="email_queue">0</span>
+    </div>
+
+    <div class="nav-section">Cases</div>
+    <div class="nav-item" data-pane="pending">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Pending Cases</span>
+      <span class="badge" data-counter="cases_pending">0</span>
+    </div>
+    <div class="nav-item" data-pane="resolved">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span>Resolved Cases</span>
+      <span class="badge" data-counter="cases_resolved">0</span>
+    </div>
+    <div class="nav-item" data-pane="escalations">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+      <span>Issue Escalation</span>
+      <span class="badge" data-counter="escalations_24h">0</span>
+    </div>
+    <div class="nav-item" data-pane="notes">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Internal Notes</span>
+    </div>
+
+    <div class="nav-section">Insights</div>
+    <div class="nav-item" data-pane="activity">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Activity Logs</span>
+    </div>
+  </aside>
+
+  <!-- Main content area -->
+  <main class="mgr-main">
+
+    <!-- ============== DASHBOARD ============== -->
+    <section class="mgr-pane active" data-pane-content="dash">
+      <div class="mgr-page-head">
+        <div>
+          <h1>Manager Dashboard</h1>
+          <div class="lead" style="color:var(--text-muted);font-size:0.95rem;margin-top:6px;">Realtime view of every deposit, ticket, KYC and payout across the platform.</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" id="export-dashboard">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- KPI grid -->
+      <div class="kpi-grid" id="kpi-grid">
+        <div class="kpi-card"><div class="icon">$</div><div class="label">Verified deposits (USDT)</div><div class="value" data-kpi="deposits_volume_usdt">0</div><div class="delta up">↑ past 30 days</div></div>
+        <div class="kpi-card k-purple"><div class="icon">⏳</div><div class="label">Pending verifications</div><div class="value" data-kpi="deposits_pending">0</div><div class="delta down">Awaiting admin</div></div>
+        <div class="kpi-card k-cyan"><div class="icon">↑</div><div class="label">Withdrawal requests</div><div class="value" data-kpi="withdrawals_pending">0</div><div class="delta">Process queue</div></div>
+        <div class="kpi-card k-emerald"><div class="icon">↓</div><div class="label">Paid withdrawals (USDT)</div><div class="value" data-kpi="withdrawals_volume_usdt">0</div><div class="delta up">Settled volume</div></div>
+        <div class="kpi-card k-pink"><div class="icon">★</div><div class="label">Open support tickets</div><div class="value" data-kpi="tickets_open">0</div><div class="delta">SLA 24h</div></div>
+        <div class="kpi-card k-blue"><div class="icon">✓</div><div class="label">Resolved (lifetime)</div><div class="value" data-kpi="tickets_resolved">0</div><div class="delta up">Track & optimize</div></div>
+        <div class="kpi-card k-purple"><div class="icon">!</div><div class="label">Open complaints</div><div class="value" data-kpi="complaints_open">0</div><div class="delta down">Follow up daily</div></div>
+        <div class="kpi-card"><div class="icon">⊕</div><div class="label">Pending KYC review</div><div class="value" data-kpi="kyc_pending">0</div><div class="delta down">Verify within 12h</div></div>
+        <div class="kpi-card k-cyan"><div class="icon">$</div><div class="label">Refunds (paid)</div><div class="value" data-kpi="refunds_volume_usdt">0</div><div class="delta">Audit monthly</div></div>
+        <div class="kpi-card k-blue"><div class="icon">@</div><div class="label">Email queue</div><div class="value" data-kpi="email_queue">0</div><div class="delta">Templates ready</div></div>
+        <div class="kpi-card k-emerald"><div class="icon">⌬</div><div class="label">Active users (24h)</div><div class="value" data-kpi="users_active_24h">0</div><div class="delta up">Realtime</div></div>
+        <div class="kpi-card k-pink"><div class="icon">↑↑</div><div class="label">Escalations (24h)</div><div class="value" data-kpi="escalations_24h">0</div><div class="delta">Watch SLAs</div></div>
+      </div>
+
+      <!-- Two-column panels -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Latest deposit activity</h3>
+            <span class="sub">Realtime ingest</span>
+          </div>
+          <div class="feed" id="dash-deposits">
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Open tickets priority queue</h3>
+            <span class="sub">By severity</span>
+          </div>
+          <div class="feed" id="dash-tickets">
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:22px;">
+        <div class="panel-head">
+          <h3>Live activity feed</h3>
+          <span class="sub">Latest 12 events from platform + admin actions</span>
+        </div>
+        <div class="feed" id="dash-activity">
+          <div class="skeleton" style="height:34px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== GENERIC PANES ============== -->
+    <!-- Deposits -->
+    <section class="mgr-pane" data-pane-content="deposits">
+      <div class="mgr-page-head">
+        <div><h1>User Deposits</h1><div class="lead" style="color:var(--text-muted);">Verify, audit, and reconcile inbound USDT deposits.</div></div>
+      </div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar">
+          <div class="filters">
+            <select class="btn btn-ghost btn-sm" data-filter="internal_status">
+              <option value="">All statuses</option>
+              <option value="pending_verification">Pending</option>
+              <option value="verified">Verified</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select class="btn btn-ghost btn-sm" data-filter="network">
+              <option value="">All networks</option>
+              <option value="TRC20">TRC20</option><option value="ERC20">ERC20</option><option value="BEP20">BEP20</option><option value="Polygon">Polygon</option><option value="Arbitrum">Arbitrum</option><option value="Solana">Solana</option>
+            </select>
+          </div>
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" placeholder="Search by email, hash, plan…"/>
+          </div>
+        </div>
+        <div data-table-source="/api/deposits" data-table-template="deposits"></div>
+      </div>
+    </section>
+
+    <!-- Withdrawals -->
+    <section class="mgr-pane" data-pane-content="withdrawals">
+      <div class="mgr-page-head"><div><h1>Withdrawal Requests</h1><div class="lead" style="color:var(--text-muted);">Approve, reject, or hold withdrawal requests submitted by users.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar">
+          <div class="filters">
+            <select class="btn btn-ghost btn-sm" data-filter="status">
+              <option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search user or wallet…"/></div>
+        </div>
+        <div data-table-source="/api/withdrawals" data-table-template="withdrawals"></div>
+      </div>
+    </section>
+
+    <!-- Verify -->
+    <section class="mgr-pane" data-pane-content="verify">
+      <div class="mgr-page-head"><div><h1>Payment Verification Queue</h1><div class="lead" style="color:var(--text-muted);">All deposits awaiting admin confirm and clearance.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"><span class="pill pill-warning" data-counter="deposits_pending">0 pending</span></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/deposits" data-table-template="verify" data-filter-status="pending_verification"></div>
+      </div>
+    </section>
+
+    <!-- Refunds -->
+    <section class="mgr-pane" data-pane-content="refunds">
+      <div class="mgr-page-head">
+        <div><h1>Refund Management</h1><div class="lead" style="color:var(--text-muted);">Process user-initiated and admin-initiated refunds.</div></div>
+        <div class="actions"><button class="btn btn-gold btn-sm" id="new-refund-btn">+ New Refund</button></div>
+      </div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"><select class="btn btn-ghost btn-sm" data-filter="status"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="completed">Completed</option></select></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/refunds" data-table-template="refunds"></div>
+      </div>
+    </section>
+
+    <!-- Payment History -->
+    <section class="mgr-pane" data-pane-content="payments">
+      <div class="mgr-page-head"><div><h1>Payment History</h1><div class="lead" style="color:var(--text-muted);">All deposits, sorted by recent.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/payments" data-table-template="history"></div>
+      </div>
+    </section>
+
+    <!-- Financial Reports -->
+    <section class="mgr-pane" data-pane-content="reports">
+      <div class="mgr-page-head">
+        <div><h1>Financial Reports <span class="lead">· Support-related</span></h1><div class="lead" style="color:var(--text-muted);">Operational metrics & financial rollups.</div></div>
+        <div class="actions">
+          <select class="btn btn-ghost btn-sm" id="report-kind">
+            <option value="support_overview">Support Overview</option>
+            <option value="financial_summary">Financial Summary</option>
+            <option value="kyc_funnel">KYC Funnel</option>
+          </select>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Roll-up metrics</h3><span class="sub" id="report-sub">Live</span></div>
+          <div id="report-table"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>KPI summary</h3><span class="sub">Top counters</span></div>
+          <div id="report-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tickets -->
+    <section class="mgr-pane" data-pane-content="tickets">
+      <div class="mgr-page-head"><div><h1>Support Tickets</h1><div class="lead" style="color:var(--text-muted);">Resolve, escalate, or assign — keep platform SLA tight.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters">
+          <select class="btn btn-ghost btn-sm" data-filter="status"><option value="">All</option><option value="open">Open</option><option value="in_progress">In Progress</option><option value="escalated">Escalated</option><option value="resolved">Resolved</option></select>
+          <select class="btn btn-ghost btn-sm" data-filter="priority"><option value="">All priorities</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option></select>
+        </div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/tickets" data-table-template="tickets"></div>
+      </div>
+    </section>
+
+    <!-- Complaints -->
+    <section class="mgr-pane" data-pane-content="complaints">
+      <div class="mgr-page-head"><div><h1>User Complaints</h1><div class="lead" style="color:var(--text-muted);">High-sensitivity cases that need careful handling.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"><select class="btn btn-ghost btn-sm" data-filter="severity"><option value="">All severities</option><option value="high">High</option><option value="normal">Normal</option></select></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/complaints" data-table-template="complaints"></div>
+      </div>
+    </section>
+
+    <!-- KYC -->
+    <section class="mgr-pane" data-pane-content="kyc">
+      <div class="mgr-page-head"><div><h1>KYC Verification</h1><div class="lead" style="color:var(--text-muted);">Review identity documents and approve/reject users.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"><select class="btn btn-ghost btn-sm" data-filter="status"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/kyc" data-table-template="kyc"></div>
+      </div>
+    </section>
+
+    <!-- User Communication -->
+    <section class="mgr-pane" data-pane-content="comms">
+      <div class="mgr-page-head"><div><h1>User Communication</h1><div class="lead" style="color:var(--text-muted);">Choose a case to message the user directly.</div></div></div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Open conversations</h3><span class="sub">Click to load thread</span></div>
+          <div id="comms-list">
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+            <div class="skeleton" style="height:48px;"></div>
+          </div>
+        </div>
+        <div class="panel" style="display:flex;flex-direction:column;min-height:520px;">
+          <div class="panel-head"><h3 id="comms-title">Select a case</h3><span class="sub" id="comms-sub">—</span></div>
+          <div class="convo" id="comms-thread" style="flex:1;overflow-y:auto;padding:0 4px;"></div>
+          <div class="composer" style="padding:14px 4px 4px;">
+            <textarea id="comms-input" placeholder="Write a message to the user…"></textarea>
+            <button class="btn btn-purple btn-sm" id="comms-send" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Email Notifications -->
+    <section class="mgr-pane" data-pane-content="emails">
+      <div class="mgr-page-head">
+        <div><h1>Email Notifications</h1><div class="lead" style="color:var(--text-muted);">Queue and send transactional & manual emails to users.</div></div>
+        <div class="actions"><button class="btn btn-gold btn-sm" id="new-email-btn">+ Compose</button></div>
+      </div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"><select class="btn btn-ghost btn-sm" data-filter="status"><option value="">All</option><option value="queued">Queued</option><option value="sent">Sent</option></select></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/emails" data-table-template="emails"></div>
+      </div>
+    </section>
+
+    <!-- Pending Cases -->
+    <section class="mgr-pane" data-pane-content="pending">
+      <div class="mgr-page-head"><div><h1>Pending Cases</h1><div class="lead" style="color:var(--text-muted);">Open and unassigned tickets & complaints.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/cases" data-table-template="cases" data-filter-status="open"></div>
+      </div>
+    </section>
+
+    <!-- Resolved Cases -->
+    <section class="mgr-pane" data-pane-content="resolved">
+      <div class="mgr-page-head"><div><h1>Resolved Cases</h1><div class="lead" style="color:var(--text-muted);">Closed tickets and complaints archive.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/cases" data-table-template="cases" data-filter-status="resolved"></div>
+      </div>
+    </section>
+
+    <!-- Escalations -->
+    <section class="mgr-pane" data-pane-content="escalations">
+      <div class="mgr-page-head"><div><h1>Issue Escalation</h1><div class="lead" style="color:var(--text-muted);">Audit trail of cases bumped up the chain.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/escalations" data-table-template="escalations"></div>
+      </div>
+    </section>
+
+    <!-- Internal Notes -->
+    <section class="mgr-pane" data-pane-content="notes">
+      <div class="mgr-page-head"><div><h1>Internal Notes</h1><div class="lead" style="color:var(--text-muted);">Private staff-only annotations per case.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/notes" data-table-template="notes"></div>
+      </div>
+    </section>
+
+    <!-- Activity Logs -->
+    <section class="mgr-pane" data-pane-content="activity">
+      <div class="mgr-page-head"><div><h1>Activity Logs</h1><div class="lead" style="color:var(--text-muted);">Every tracked event from the platform and admin actions.</div></div></div>
+      <div class="mgr-table-wrap">
+        <div class="mgr-toolbar"><div class="filters"></div><div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Search…"/></div></div>
+        <div data-table-source="/api/activity" data-table-template="activity"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Detail drawer (used for messaging + quick actions) -->
+<aside class="mgr-drawer" id="mgr-drawer" aria-hidden="true">
+  <header>
+    <h2 id="drawer-title">Case</h2>
+    <button class="icon-btn" id="drawer-close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </header>
+  <div class="body">
+    <div class="meta" id="drawer-meta"></div>
+    <div class="convo" id="drawer-convo"></div>
+    <div class="composer">
+      <textarea id="drawer-input" placeholder="Reply to user…"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;" id="drawer-actions"></div>
+    <div style="margin-top:18px;display:flex;gap:8px;">
+      <button class="btn btn-purple btn-sm" id="drawer-send">Send</button>
+      <button class="btn btn-ghost btn-sm" id="drawer-add-note">+ Note</button>
+    </div>
+  </div>
+</aside>
+
+<script src="assets/js/manager.js"></script>
+</body>
+</html>

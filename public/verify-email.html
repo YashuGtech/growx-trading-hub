@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify your email — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span>Growx</span>
+  </a>
+  <div class="nav-cta">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+  </div>
+</nav>
+
+<div class="login-wrap">
+  <form id="verify-email-form" class="login-box reveal" autocomplete="off">
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="width:56px;height:56px;border-radius:16px;background:var(--grad-gold);display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow-gold);margin-bottom:14px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h1>Check your inbox</h1>
+      <p class="sub">We sent a 6-digit code to <strong id="vt-email">your email</strong>. Enter it below to finish creating your Growx account.</p>
+    </div>
+
+    <div class="stack">
+      <div class="field">
+        <label for="vt-code">6-digit code</label>
+        <input id="vt-code" class="input" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required style="font-family:'JetBrains Mono',monospace;letter-spacing:.25em;font-size:1.2rem;text-align:center;" autocomplete="one-time-code" />
+        <div id="vt-validity" style="font-size:0.82rem;color:var(--text-muted);margin-top:8px;text-align:center;letter-spacing:0.01em;">
+          Valid for <strong style="color:var(--accent-gold);">30 minutes</strong> · check spam if you don't see the email.
+        </div>
+      </div>
+
+      <button id="vt-submit" type="submit" class="btn btn-gold btn-lg btn-block" style="margin-top:8px;">
+        Verify & Continue
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+
+      <div class="divider"><span>OR</span></div>
+
+      <button id="vt-resend" type="button" class="btn btn-ghost btn-block">
+        Resend code
+      </button>
+
+      <div style="text-align:center;margin-top:18px;font-size:0.92rem;color:var(--text-secondary);">
+        Wrong email? <a href="signup.html" style="color:var(--accent-gold);font-weight:700;margin-left:4px;">Sign up again</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const email = (params.get('email') || localStorage.getItem('growx_pending_email') || '').trim();
+  const emailEl = document.getElementById('vt-email');
+  if (emailEl) emailEl.textContent = email || 'your email';
+  if (!email) {
+    // No email context — bounce them to signup
+    window.location.replace('signup.html');
+    return;
+  }
+
+  const form = document.getElementById('verify-email-form');
+  const codeInput = document.getElementById('vt-code');
+  const submitBtn = document.getElementById('vt-submit');
+  const resendBtn = document.getElementById('vt-resend');
+
+  function toast(msg, type = 'success') { window.fnxToast && window.fnxToast(msg, type); }
+
+  // Auto-focus code field and accept auto-typed digits
+  if (!codeInput.value) codeInput && codeInput.focus();
+  codeInput && codeInput.addEventListener('input', () => {
+    codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = (codeInput.value || '').trim();
+    if (!/^\d{6}$/.test(code)) { toast('Please enter the 6-digit code', 'error'); return; }
+    if (window.fnxSetButtonLoading) {
+      window.fnxSetButtonLoading(submitBtn, 'Verifying…');
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying…';
+    }
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, code })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        const reason = (data && data.reason) || 'invalid';
+        const msg = reason === 'expired' ? 'Code expired — request a new one'
+                  : reason === 'too_many_attempts' ? 'Too many wrong tries — request a new code'
+                  : reason === 'bad_code' ? 'That code didn\'t match'
+                  : 'Verification failed';        toast(msg, 'error');
+        if (window.fnxResetButton) window.fnxResetButton(submitBtn);
+        else { submitBtn.disabled = false; submitBtn.innerHTML = 'Verify & Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>'; }
+        return;
+      }
+
+      // Replace form with a drawn checkmark + confetti burst, then redirect.
+      // Tiny delay so the user perceives the submit-button checkmark before
+      // the form is hidden and the success card takes over.
+      setTimeout(function () {
+        if (window.fnxShowSuccessCard) window.fnxShowSuccessCard({
+          form: form,
+          title: 'Email verified!',
+          sub: 'Welcome to Growx — taking you to your dashboard…',
+          icon: 'check'
+        });
+        if (window.fnxConfetti) window.fnxConfetti({ count: 90, originX: 0.5 });
+      }, 220);
+      // Hide the validity hint that referenced the (now-used) code.
+      const validity = document.getElementById('vt-validity');
+      if (validity) validity.style.display = 'none';
+      try { localStorage.removeItem('growx_pending_email'); } catch (_) {}
+      try {
+        localStorage.setItem('growx_user', JSON.stringify({
+          id: data.user.id, email: data.user.email, name: data.user.name, joined_at: Date.now()
+        }));
+      } catch (_) {}
+      setTimeout(() => {
+        const redirect = localStorage.getItem('growx_redirect') || 'dashboard.html';
+        try { localStorage.removeItem('growx_redirect'); } catch (_) {}
+        window.location.href = redirect;
+      }, 1700);
+    } catch (err) {
+      toast('Network error — try again', 'error');
+      if (window.fnxResetButton) window.fnxResetButton(submitBtn);
+      else { submitBtn.disabled = false; submitBtn.innerHTML = 'Verify & Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>'; }
+    }
+  });
+
+  resendBtn.addEventListener('click', async () => {
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/auth/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        toast('Could not resend — try again later', 'error');
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Resend code';
+        return;
+      }
+      if (data.already_verified) {
+        toast('This email is already verified — signing you in…');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+        return;
+      }
+      toast('A new code was sent');
+      codeInput && (codeInput.value = '');
+      codeInput && codeInput.focus();
+      // Brief cooldown so the button can't be clicked twice in a row.
+      // The server caps true resends at 3 / 10 min anyway.
+      let cooldown = 10;
+      resendBtn.textContent = 'Resend in ' + cooldown + 's';
+      const tick = setInterval(() => {
+        cooldown -= 1;
+        if (cooldown <= 0) {
+          clearInterval(tick);
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend code';
+        } else {
+          resendBtn.textContent = 'Resend in ' + cooldown + 's';
+        }
+      }, 1000);
+    } catch (_) {
+      toast('Network error', 'error');
+      resendBtn.disabled = false;
+      resendBtn.textContent = 'Resend code';
+    }
+  });
+})();
+</script>
+<script src="assets/js/reporter.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+</body>
+</html>

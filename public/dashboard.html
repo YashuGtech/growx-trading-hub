@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trader Dashboard — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span>Funded<span class="text-grad-gold">NXT</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="accounts.html">Accounts</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" id="signout-btn" class="btn btn-ghost btn-sm">Sign Out</a>
+    <a href="accounts.html" class="btn btn-gold btn-sm">New Account</a>
+    <button class="nav-burger" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar reveal">
+    <div class="profile">
+      <div class="avatar" id="avatar-initials">FN</div>
+      <div>
+        <div class="name" id="dash-name">Trader</div>
+        <div class="tier" id="dash-tier">No active account</div>
+      </div>
+    </div>
+    <ul>
+      <li><a href="#" class="active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a></li>
+      <li><a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+        Trading
+      </a></li>
+      <li><a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        MT5 Credentials
+      </a></li>
+      <li><a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/></svg>
+        Wallet
+      </a></li>
+      <li><a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Payouts
+      </a></li>
+      <li><a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Support
+      </a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="reveal" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+      <div>
+        <h1 class="h-1" style="margin-bottom:6px;font-size:1.9rem;">Welcome, <span class="text-grad-gold" id="dash-first">Trader</span></h1>
+        <p style="color:var(--text-secondary);font-size:0.96rem;" id="dash-greet">Here's your trading overview today.</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Account status</div>
+        <div id="dash-status" style="margin-top:6px;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-pill);background:rgba(37, 99, 235, 0.1);border:1px solid rgba(59, 130, 246, 0.35);color:var(--accent-blue-light);font-size:0.88rem;font-weight:600;">
+          <span class="pulse-dot"></span> Awaiting verification
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending banner -->
+    <div id="pending-banner" class="reveal delay-1 mt-md" style="padding:20px 24px;border-radius:var(--r-lg);background:linear-gradient(135deg,rgba(37, 99, 235, 0.08),rgba(139,92,246,0.06));border:1px solid var(--border-glow);display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+      <div style="width:44px;height:44px;border-radius:12px;background:var(--grad-gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M12 22V12M3.27 6.96L12 12l8.73-5.04"/></svg>
+      </div>
+      <div style="flex:1;min-width:240px;">
+        <div style="font-weight:700;font-size:1.05rem;color:var(--text-primary);">Account provisioning in progress</div>
+        <div style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px;">Your <strong style="color:var(--accent-gold);" id="pending-plan">funding</strong> order has been received. Credentials will arrive within 24 hours.</div>
+      </div>
+      <a href="waiting.html" class="btn btn-gold btn-sm">View Status →</a>
+    </div>
+
+    <!-- Metrics -->
+    <div class="dash-metrics">
+      <div class="dash-metric reveal delay-1">
+        <div class="lbl">Funded Capital</div>
+        <div class="num">$<span id="m-capital">0</span></div>
+        <div class="sub" id="m-capital-sub">No active account</div>
+      </div>
+      <div class="dash-metric reveal delay-2">
+        <div class="lbl">Profit Target</div>
+        <div class="num">$<span id="m-target">0</span></div>
+        <div class="sub" id="m-target-sub">Phase 1 — 1-Step Challenge</div>
+      </div>
+      <div class="dash-metric reveal delay-3">
+        <div class="lbl">Profit Split</div>
+        <div class="num"><span id="m-split">—</span>%</div>
+        <div class="sub">Up to 90% to you</div>
+      </div>
+      <div class="dash-metric reveal delay-4">
+        <div class="lbl">Total Payouts</div>
+        <div class="num">$0</div>
+        <div class="sub">First payout after $250 profit</div>
+      </div>
+    </div>
+
+    <!-- Account details (from signup) -->
+    <div class="reveal delay-2" style="margin-top:42px;display:grid;grid-template-columns:1.5fr 1fr;gap:24px;">
+      <div class="glass-strong" style="padding:28px;border-radius:var(--r-lg);">
+        <div class="dash-section-head">
+          <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;">Account information</h2>
+          <span style="font-size:0.8rem;color:var(--text-muted);">From your sign-up</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin-top:20px;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Name</div>
+            <div style="margin-top:6px;font-weight:600;" id="d-name">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Email</div>
+            <div style="margin-top:6px;font-weight:600;" id="d-email">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Phone</div>
+            <div style="margin-top:6px;font-weight:600;" id="d-phone">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Country</div>
+            <div style="margin-top:6px;font-weight:600;" id="d-country">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Joined</div>
+            <div style="margin-top:6px;font-weight:600;" id="d-joined">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Order ID</div>
+            <div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--accent-gold);" id="d-order">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-strong" style="padding:28px;border-radius:var(--r-lg);">
+        <div class="dash-section-head">
+          <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;">Trading limits</h2>
+        </div>
+        <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:10px;">
+            <span style="color:var(--text-secondary);font-size:0.9rem;">Max daily loss</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent-emerald);" id="l-daily">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:10px;">
+            <span style="color:var(--text-secondary);font-size:0.9rem;">Max total drawdown</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent-emerald);" id="l-total">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:10px;">
+            <span style="color:var(--text-secondary);font-size:0.9rem;">Min trading days</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;">3</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(255,255,255,0.02);border-radius:10px;">
+            <span style="color:var(--text-secondary);font-size:0.9rem;">Leverage</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;">1:100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="reveal delay-3" style="margin-top:38px;">
+      <div class="dash-section-head">
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;">Recent activity</h2>
+        <span style="font-size:0.85rem;color:var(--text-muted);">Your last 5 events</span>
+      </div>
+      <div class="glass-strong" style="padding:8px;border-radius:var(--r-lg);margin-top:14px;">
+        <table class="dash-table">
+          <thead>
+            <tr><th>Date</th><th>Event</th><th>Plan</th><th>Network</th><th class="pos">Status</th></tr>
+          </thead>
+          <tbody id="activity-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:36px;">No recent activity yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Auth gate handled by main.js (single source of truth)
+(function () {
+  const userStr = localStorage.getItem('fnx_user');
+  if (!userStr) return; // main.js will redirect to login.html
+  const plan = localStorage.getItem('fnx_plan') || '';
+  const balance = localStorage.getItem('fnx_balance') || '0';
+  const price = localStorage.getItem('fnx_price') || '0';
+  const network = localStorage.getItem('fnx_network') || '';
+  const txTime = localStorage.getItem('fnx_tx_time');
+
+  let user = null;
+  try { user = JSON.parse(userStr); } catch (e) {}
+
+  const tierLimits = {
+    'Lite':         ['5%',   '10%', '80%', '10%'],
+    'Stellar 1':    ['4%',   '8%',  '85%', '9%'],
+    'Stellar 2':    ['4%',   '8%',  '88%', '8%'],
+    'Orion Prime':  ['3%',   '6%',  '90%', '8%'],
+    'Nebula Pro':   ['3%',   '6%',  '90%', '8%'],
+    'Apex':         ['2.5%', '5%',  '90%', '6%'],
+    'Quantum':      ['2%',   '4%',  '90%', '6%']
+  };
+
+  // Bind identity
+  if (user) {
+    const first = (user.name || 'Trader').split(' ')[0];
+    const initials = (user.name || 'FN').split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase();
+    document.getElementById('avatar-initials').textContent = initials || 'FN';
+    document.getElementById('dash-name').textContent = user.name || 'Trader';
+    document.getElementById('dash-first').textContent = first;
+    document.getElementById('dash-greet').textContent = `Signed in as ${user.email || ''}`;
+    document.getElementById('d-name').textContent = user.name || '—';
+    document.getElementById('d-email').textContent = user.email || '—';
+    const cc = user.country_code || '';
+    document.getElementById('d-phone').textContent = cc ? `${cc} ${user.phone || ''}` : (user.phone || '—');
+    document.getElementById('d-country').textContent = user.country || '—';
+    document.getElementById('d-joined').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString() : new Date().toLocaleDateString();
+  }
+
+  // Bind pending order
+  if (plan) {
+    document.getElementById('dash-tier').textContent = `${plan} · ${balance}`;
+    document.getElementById('pending-plan').textContent = plan;
+    document.getElementById('d-order').textContent = 'FNX-' + Date.now().toString(36).toUpperCase().slice(-8);
+    document.getElementById('m-capital').textContent = balance;
+    document.getElementById('m-capital-sub').textContent = plan;
+    const limits = tierLimits[plan] || ['—','—','—','—'];
+    document.getElementById('l-daily').textContent = limits[0];
+    document.getElementById('l-total').textContent = limits[1];
+    document.getElementById('m-split').textContent = limits[2];
+
+    // Profit target = balance * target% (10/9/8/8/8/6/6)
+    const balNum = parseInt(String(balance).replace(/[^0-9]/g, ''), 10) || 0;
+    const pctNum = parseFloat(limits[3]) || 0;
+    if (balNum && pctNum) {
+      const target = Math.round(balNum * pctNum / 100);
+      document.getElementById('m-target').textContent = target.toLocaleString();
+      document.getElementById('m-target-sub').textContent = 'Phase 1 — ' + limits[3] + ' of capital';
+    }      if (txTime) {
+      const elapsed = Date.now() - parseInt(txTime);
+      if (elapsed > 24 * 60 * 60 * 1000) {
+        document.getElementById('dash-status').innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:var(--accent-emerald);box-shadow:0 0 10px var(--accent-emerald);display:inline-block;"></span> Credentials ready';
+      } else {
+        document.getElementById('dash-status').innerHTML = '<span class="pulse-dot"></span> Provisioning (' + Math.round(elapsed / 60000) + ' min ago)';
+      }
+    }
+
+    // Build activity rows
+    const tbody = document.getElementById('activity-tbody');
+    if (tbody) {
+      const now = new Date();
+      const rows = [
+        { d: now.toLocaleString(), e: 'Payment verified', p: plan, n: (network || 'TRC20').toUpperCase(), s: 'Confirmed' },
+        { d: now.toLocaleString(), e: 'Order submitted', p: plan, n: (network || 'TRC20').toUpperCase(), s: 'Closed' },
+        { d: now.toLocaleString(), e: 'Account created', p: '—', n: '—', s: 'Confirmed' }
+      ];
+      tbody.innerHTML = rows.map(r =>
+        `<tr>
+          <td style="color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:0.85rem;">${r.d}</td>
+          <td>${r.e}</td>
+          <td>${r.p}</td>
+          <td style="color:var(--accent-cyan);font-family:'JetBrains Mono',monospace;font-size:0.85rem;">${r.n}</td>
+          <td class="pos">${r.s}</td>
+        </tr>`
+      ).join('');
+    }
+  }
+})();
+</script>
+<script src="assets/js/reporter.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+</body>
+</html>
