@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Payment — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span>Funded<span class="text-grad-gold">NXT</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="accounts.html" class="active">Accounts</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+    <button class="nav-burger" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Stepper -->
+<section style="padding:140px 0 30px;">
+  <div class="container">
+    <div class="stepper">
+      <div class="step done">
+        <div class="step-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="step-label">Conditions</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step active">
+        <div class="step-circle">2</div>
+        <div class="step-label">Payment</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-label">Verify</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-label">Credentials</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container" style="max-width:920px;">
+
+    <div class="reveal text-center" style="margin-bottom:32px;">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Send exactly the amount in USDT (<span id="qr-net">TRC20</span>)
+      </div>
+      <h1 class="h-1" style="margin: 18px 0 12px;">Send <span class="text-grad-gold">USDT</span> to complete payment</h1>
+      <p class="lead" style="margin: 0 auto;">Scan the QR code or copy the wallet address and send the exact amount shown below.</p>
+    </div>
+
+    <!-- Payment Box -->
+    <div class="glass-strong reveal delay-1" style="padding:40px;border-radius:22px;position:relative;">
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;">
+        <!-- Left: QR Code -->
+        <div style="text-align:center;">
+          <div id="qr-wrap"></div>
+          <div style="margin-top:14px;font-size:0.85rem;color:var(--text-muted);">Scan with your wallet app</div>
+        </div>
+
+        <!-- Right: Amount + Address -->
+        <div>
+          <div style="margin-bottom:24px;">
+            <div style="font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Send exactly</div>
+            <div class="amount-display">
+              $<span id="amount-usdt">159</span> <span class="crypto">USDT</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Network</div>
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(37, 99, 235, 0.1);border:1px solid var(--border-glow);border-radius:var(--r-pill);color:var(--accent-gold);font-weight:600;font-size:0.95rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span id="qr-net-2">TRC20 (Tron)</span>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <div style="font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Deposit address</div>
+            <div class="address-row">
+              <div id="addr-text" class="address-text">TX9a1Fnpk7Z8bX6n2GdQ7Cz3Yb5pNkRdLr</div>
+              <button class="copy-btn" data-copy-wallet>Copy</button>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding:14px 18px;background:rgba(37, 99, 235, 0.08);border:1px solid rgba(59, 130, 246, 0.3);border-radius:var(--r-md);font-size:0.85rem;color:var(--accent-blue-light);display:flex;align-items:flex-start;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            <span>Send only USDT on the selected network. Sending other tokens or wrong network may result in permanent loss.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border-subtle);margin-top:36px;padding-top:24px;text-align:center;">
+        <button id="paid-btn" class="btn btn-gold btn-lg">
+          I Have Paid — Verify Now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px;"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+        <div style="color:var(--text-muted);font-size:0.85rem;margin-top:14px;">
+          After sending USDT, click the button above to upload your transaction details.
+        </div>
+      </div>
+    </div>
+
+    <!-- Info below -->
+    <div class="grid reveal delay-2 mt-lg" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent-gold);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Confirmation Time
+        </div>
+        <div style="font-size:0.9rem;color:var(--text-secondary);">Usually 1–5 minutes depending on network load.</div>
+      </div>
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent-gold);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Safety
+        </div>
+        <div style="font-size:0.9rem;color:var(--text-secondary);">All wallets are non-custodial and freshly generated per session.</div>
+      </div>
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent-gold);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><circle cx="12" cy="13" r="3"/></svg>
+          Fees
+        </div>
+        <div style="font-size:0.9rem;color:var(--text-secondary);">We cover all network fees. You only pay the activation fee.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D Verifying Overlay (shown after "I Have Paid") -->
+<div id="verify-3d-overlay" class="verify-overlay" aria-hidden="true">
+  <button type="button" class="verify-close" id="verify-overlay-close" aria-label="Close overlay">×</button>
+  <div class="verify-stage">
+    <div class="verify-rings"><span></span><span></span><span></span></div>
+    <div class="verify-orbit"></div>
+    <div class="verify-orbit-2"></div>
+    <div class="verify-cube">
+      <div class="vface vf-front"></div>
+      <div class="vface vf-back"></div>
+      <div class="vface vf-right"></div>
+      <div class="vface vf-left"></div>
+      <div class="vface vf-top"></div>
+      <div class="vface vf-bottom"></div>
+    </div>
+    <div class="verify-center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+  </div>
+  <div class="verify-title">Verifying on blockchain</div>
+  <div class="verify-sub">Confirming your USDT transaction across the network — this usually takes a few seconds.</div>
+  <div class="verify-steps" id="verify-wallet-step-pills">
+    <div class="verify-step-pill done"><span class="dot"></span> Transaction detected</div>
+    <div class="verify-step-pill active"><span class="dot"></span> Confirming network</div>
+    <div class="verify-step-pill"><span class="dot"></span> Verifying recipient</div>
+    <div class="verify-step-pill"><span class="dot"></span> Issuing credentials</div>
+  </div>
+  <div class="verify-progress">
+    <div class="verify-progress-bar" id="verify-wallet-progress-bar"></div>
+  </div>
+</div>
+
+<!-- 3D Verify Driver: intercept "I Have Paid" → overlay → verify.html -->
+<script>
+(function () {
+  'use strict';
+  const paidBtn = document.getElementById('paid-btn');
+  if (!paidBtn) return;
+
+  const plan = localStorage.getItem('fnx_plan') || 'Stellar 1';
+  const net = localStorage.getItem('fnx_network') || 'TRC20';
+  const verifyUrl = 'verify.html?plan=' + encodeURIComponent(plan) + '&net=' + net;
+
+  /* Capture phase: fires BEFORE main.js's redirect-to-verify.html default */
+  paidBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    showOverlay();
+  }, true);
+
+  function showOverlay() {
+    const overlay = document.getElementById('verify-3d-overlay');
+    if (!overlay) {
+      window.location.href = verifyUrl;
+      return;
+    }
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    /* Reset pills */
+    const pills = document.querySelectorAll('#verify-wallet-step-pills .verify-step-pill');
+    pills.forEach((p) => { p.classList.remove('active'); p.classList.remove('done'); });
+    if (pills[0]) pills[0].classList.add('done');
+    if (pills[1]) pills[1].classList.add('active');
+
+    /* Animate progress bar: 0→40→75→100 */
+    const bar = document.getElementById('verify-wallet-progress-bar');
+    if (bar) {
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 1s cubic-bezier(0.22, 1, 0.36, 1)';
+        bar.style.width = '40%';
+        setTimeout(() => { bar.style.width = '75%'; }, 1100);
+        setTimeout(() => { bar.style.width = '100%'; }, 2300);
+      });
+    }
+
+    /* Advance pills */
+    setTimeout(() => {
+      if (pills[1]) { pills[1].classList.remove('active'); pills[1].classList.add('done'); }
+      if (pills[2]) pills[2].classList.add('active');
+    }, 1100);
+    setTimeout(() => {
+      if (pills[2]) { pills[2].classList.remove('active'); pills[2].classList.add('done'); }
+      if (pills[3]) pills[3].classList.add('active');
+    }, 2300);
+
+    /* Final step → navigate to upload form */
+    setTimeout(() => {
+      if (pills[3]) { pills[3].classList.remove('active'); pills[3].classList.add('done'); }
+      setTimeout(() => {
+        if (window.fnxToast) window.fnxToast('Verification complete — submit your details');
+        window.location.href = verifyUrl;
+      }, 350);
+    }, 2900);
+  }
+
+  /* Escape cancels + close-button cancels */
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') cancelOverlay();
+  });
+  const closeBtn = document.getElementById('verify-overlay-close');
+  if (closeBtn) closeBtn.addEventListener('click', cancelOverlay);
+
+  function cancelOverlay() {
+    const overlay = document.getElementById('verify-3d-overlay');
+    if (!overlay || !overlay.classList.contains('active')) return;
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    const bar = document.getElementById('verify-wallet-progress-bar');
+    if (bar) bar.style.width = '0%';
+  }
+})();
+</script>
+
+<script src="assets/js/reporter.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+</body>
+</html>

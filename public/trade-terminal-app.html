@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>GrowX Trade Terminal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{
+  --bg:#05070d; --bg-elev:#0b111d; --bg-card:#111a2b; --line:rgba(255,255,255,.06);
+  --text:#e6eefc; --dim:#8aa0c4; --dim2:#607597;
+  --up:#22c55e; --up-glow:rgba(34,197,94,.25);
+  --down:#ef4444; --down-glow:rgba(239,68,68,.25);
+  --brand:#3b82f6; --brand-2:#8b5cf6;
+  --grad:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  --radius:16px;
+  --shadow:0 8px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+body{padding-bottom:78px;background:radial-gradient(1200px 800px at 20% -10%,rgba(59,130,246,.08),transparent 60%),radial-gradient(1000px 600px at 100% 100%,rgba(139,92,246,.06),transparent 60%),var(--bg)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit;color:inherit;background:transparent;border:0;outline:0;width:100%}
+.mono{font-family:'JetBrains Mono',monospace}
+.up{color:var(--up)} .down{color:var(--down)}
+.hidden{display:none!important}
+
+/* ---------- Screen container ---------- */
+.app{max-width:520px;margin:0 auto;padding:0;min-height:100vh;position:relative}
+.screen{display:none;padding:16px 16px 24px;animation:fadeIn .25s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- Top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 4px 10px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 70%,rgba(5,7,13,0));backdrop-filter:blur(8px)}
+.topbar .back{width:36px;height:36px;border-radius:12px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;color:var(--dim)}
+.topbar h1{font-size:16px;font-weight:700;flex:1;text-align:center}
+.topbar .icon-btn{width:36px;height:36px;border-radius:12px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;color:var(--dim)}
+
+/* ---------- Cards ---------- */
+.card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card + .card{margin-top:12px}
+.hstack{display:flex;align-items:center;gap:10px}
+.vstack{display:flex;flex-direction:column;gap:6px}
+.row-between{display:flex;justify-content:space-between;align-items:center}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ---------- HOME ---------- */
+.home-hero{background:linear-gradient(160deg,#1e3a8a 0%,#312e81 45%,#7c3aed 100%);border-radius:20px;padding:20px;color:#fff;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.home-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(400px 200px at 90% 0%,rgba(255,255,255,.15),transparent 60%)}
+.home-hero > *{position:relative}
+.home-hero .greet{font-size:13px;opacity:.8}
+.home-hero .name{font-size:22px;font-weight:700;margin-top:2px}
+.home-hero .plan-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:4px 10px;border-radius:999px;font-size:12px;margin-top:6px}
+.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.balance-box{background:rgba(255,255,255,.08);border-radius:12px;padding:12px}
+.balance-box .label{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.5px}
+.balance-box .value{font-size:20px;font-weight:700;margin-top:4px;font-family:'JetBrains Mono',monospace}
+.pnl-line{margin-top:12px;font-size:13px;opacity:.9}
+
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.quick-action{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:.15s}
+.quick-action:hover{border-color:rgba(59,130,246,.4);transform:translateY(-1px)}
+.quick-action .qa-icon{width:38px;height:38px;border-radius:12px;background:rgba(59,130,246,.12);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+.quick-action .qa-label{font-size:12px;color:var(--dim)}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 10px}
+.section-header h2{font-size:14px;font-weight:600;color:var(--text)}
+.section-header a{font-size:12px;color:var(--brand);cursor:pointer}
+
+/* ---------- Market list ---------- */
+.market-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.market-row:last-child{border-bottom:0}
+.market-flag{width:32px;height:32px;border-radius:10px;background:rgba(59,130,246,.14);color:var(--brand);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'JetBrains Mono',monospace}
+.market-name{font-weight:600;font-size:13px}
+.market-sub{font-size:11px;color:var(--dim);margin-top:2px}
+.market-price{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px}
+.market-change{font-size:11px;margin-top:2px;font-family:'JetBrains Mono',monospace}
+.market-list{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:4px 4px}
+
+/* ---------- Tabs (inline) ---------- */
+.tabs{display:flex;background:var(--bg-elev);border-radius:12px;padding:4px;gap:4px;margin:8px 0 14px}
+.tabs button{flex:1;padding:9px 8px;border-radius:9px;color:var(--dim);font-weight:600;font-size:12px;transition:.15s}
+.tabs button.active{background:var(--brand);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.4)}
+.search{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.search input{color:var(--text)}
+
+/* ---------- Chart ---------- */
+.chart-hero{background:var(--bg-card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 10px}
+.chart-hero .sym-name{font-size:18px;font-weight:700}
+.chart-hero .sym-sub{font-size:12px;color:var(--dim);margin-top:2px}
+.chart-hero .sym-price{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;margin-top:8px}
+.chart-hero .sym-chg{font-size:13px;margin-top:2px;font-family:'JetBrains Mono',monospace}
+.chart-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;font-size:11px;color:var(--dim);margin-top:12px}
+.chart-stats > div span{display:block;color:var(--text);font-weight:600;font-family:'JetBrains Mono',monospace;margin-top:2px;font-size:12px}
+.tf-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.tf-row button{padding:5px 10px;border-radius:8px;background:var(--bg-elev);color:var(--dim);font-size:11px;font-weight:600}
+.tf-row button.active{background:var(--brand);color:#fff}
+#chart-container{margin-top:12px;height:280px;border-radius:12px;overflow:hidden;background:#080d18}
+.trade-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.trade-cta button{padding:14px;border-radius:12px;font-weight:700;font-size:15px;color:#fff}
+.trade-cta .buy{background:linear-gradient(135deg,#16a34a,#22c55e)}
+.trade-cta .sell{background:linear-gradient(135deg,#dc2626,#ef4444)}
+
+/* ---------- Place Order ---------- */
+.field{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.field .lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.field .val{display:flex;justify-content:space-between;align-items:center;margin-top:4px;gap:10px}
+.field .val input,.field .val select{font-size:15px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:32px;height:32px;border-radius:10px;background:var(--bg-elev);color:var(--text);font-size:18px;font-weight:600}
+.order-side{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--bg-elev);border-radius:12px;padding:4px;margin-bottom:10px}
+.order-side button{padding:10px;border-radius:9px;font-weight:700;color:var(--dim)}
+.order-side button.active-buy{background:var(--up);color:#fff}
+.order-side button.active-sell{background:var(--down);color:#fff}
+.order-type-tabs{display:flex;gap:0;background:var(--bg-elev);border-radius:12px;padding:4px;margin-bottom:12px}
+.order-type-tabs button{flex:1;padding:8px;border-radius:9px;color:var(--dim);font-weight:600;font-size:13px}
+.order-type-tabs button.active{background:var(--bg-card);color:var(--text)}
+.submit-btn{width:100%;padding:15px;border-radius:14px;font-weight:800;font-size:16px;color:#fff;margin-top:6px}
+.submit-btn.buy{background:linear-gradient(135deg,#16a34a,#22c55e);box-shadow:0 6px 20px rgba(34,197,94,.3)}
+.submit-btn.sell{background:linear-gradient(135deg,#dc2626,#ef4444);box-shadow:0 6px 20px rgba(239,68,68,.3)}
+
+/* ---------- Positions ---------- */
+.pos-card{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.pos-head{display:flex;justify-content:space-between;align-items:flex-start}
+.pos-pair{font-weight:700;font-size:15px}
+.pos-side-buy{background:var(--up);color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.pos-side-sell{background:var(--down);color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;font-size:11px;color:var(--dim)}
+.pos-grid > div span{display:block;color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;margin-top:2px}
+.pos-pnl{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center}
+.pos-pnl .amount{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800}
+.close-btn{padding:8px 14px;border-radius:10px;background:var(--bg-elev);color:var(--text);font-weight:600;font-size:12px;border:1px solid var(--line)}
+
+/* ---------- Bottom nav ---------- */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,17,29,.94);backdrop-filter:blur(20px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 6px 14px;z-index:30}
+.bottom-nav .tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;color:var(--dim2);font-size:10px;font-weight:600;cursor:pointer;transition:.15s}
+.bottom-nav .tab.active{color:var(--brand)}
+.bottom-nav .tab svg{width:22px;height:22px}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--bg-card);color:var(--text);padding:12px 18px;border-radius:12px;border:1px solid var(--line);font-size:13px;z-index:100;box-shadow:var(--shadow);animation:slideUp .3s ease}
+.toast.error{border-color:var(--down);color:#fecaca}
+.toast.success{border-color:var(--up);color:#bbf7d0}
+@keyframes slideUp{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* ---------- Modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:14px}
+.modal.open{display:flex;animation:fadeIn .2s}
+.modal-body{background:var(--bg-card);border:1px solid var(--line);border-radius:20px 20px 12px 12px;padding:20px;width:100%;max-width:490px;animation:slideUp .25s}
+
+/* ---------- Wallet ---------- */
+.wallet-hero{background:linear-gradient(135deg,#0b3d91 0%,#3b82f6 100%);border-radius:20px;padding:20px;color:#fff;text-align:center}
+.wallet-hero .label{font-size:12px;opacity:.85;letter-spacing:.5px;text-transform:uppercase}
+.wallet-hero .amount{font-size:36px;font-weight:800;font-family:'JetBrains Mono',monospace;margin-top:6px}
+.wallet-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.wallet-actions button{background:rgba(255,255,255,.12);border-radius:12px;padding:12px 4px;font-size:11px;font-weight:600;color:#fff}
+
+.tx-row{padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.tx-row:last-child{border-bottom:0}
+.tx-icon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.tx-icon.dep{background:rgba(34,197,94,.15);color:var(--up)}
+.tx-icon.wd{background:rgba(239,68,68,.15);color:var(--down)}
+.tx-icon.pnl{background:rgba(59,130,246,.15);color:var(--brand)}
+
+/* ---------- Settings ---------- */
+.setting-row{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);cursor:pointer}
+.setting-row:last-child{border-bottom:0}
+.setting-row .icon{width:32px;height:32px;border-radius:10px;background:rgba(59,130,246,.12);color:var(--brand);display:flex;align-items:center;justify-content:center;margin-right:12px}
+.setting-row .lbl{flex:1;font-weight:500}
+.setting-row .val{font-size:13px;color:var(--dim);margin-right:8px}
+.logout-row .icon{background:rgba(239,68,68,.12);color:var(--down)}
+.logout-row .lbl{color:var(--down)}
+
+/* ---------- Calendar ---------- */
+.cal-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.cal-tabs button{background:var(--bg-card);border-radius:10px;padding:10px 4px;text-align:center;font-size:11px;color:var(--dim);border:1px solid var(--line)}
+.cal-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.cal-tabs button .day{font-size:16px;font-weight:700;color:inherit}
+.cal-item{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:60px 1fr 90px;gap:10px;align-items:center}
+.cal-item .time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+.cal-item .title{font-weight:600;font-size:13px}
+.cal-item .impact{text-align:right;font-size:11px;font-weight:600}
+.impact-high{color:var(--down)} .impact-med{color:#f59e0b} .impact-low{color:var(--up)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ============ HOME ============ -->
+<section id="screen-home" class="screen active">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:32px;height:32px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">G</div>
+      <div><div style="font-size:12px;font-weight:800;letter-spacing:1px">GROWX</div><div style="font-size:9px;color:var(--dim);letter-spacing:2px">TRADE TERMINAL</div></div>
+    </div>
+    <button class="icon-btn" onclick="showScreen('settings')" aria-label="Settings">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div class="home-hero">
+    <div class="greet">Welcome back,</div>
+    <div class="name" id="home-name">Trader</div>
+    <div class="plan-chip"><span style="width:6px;height:6px;background:#fff;border-radius:50%"></span><span id="home-plan">Stellar 1</span> · <span id="home-trade-id" class="mono">FNX-------</span></div>
+    <div class="balance-grid">
+      <div class="balance-box"><div class="label">Balance</div><div class="value" id="home-balance">$0.00</div></div>
+      <div class="balance-box"><div class="label">Equity</div><div class="value" id="home-equity">$0.00</div></div>
+    </div>
+    <div class="pnl-line">Total P&amp;L <span id="home-pnl" class="mono">+$0.00</span> · <span id="home-pnl-pct" class="mono">+0.00%</span></div>
+  </div>
+
+  <div class="quick-actions">
+    <div class="quick-action" onclick="showScreen('wallet')">
+      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="qa-label">Deposit</div>
+    </div>
+    <div class="quick-action" onclick="showScreen('wallet')">
+      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7 7 7-7"/></svg></div>
+      <div class="qa-label">Withdraw</div>
+    </div>
+    <div class="quick-action" onclick="showScreen('markets')">
+      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div>
+      <div class="qa-label">Trade</div>
+    </div>
+  </div>
+
+  <div class="section-header"><h2>Market Overview</h2><a onclick="showScreen('markets')">See all →</a></div>
+  <div class="market-list" id="home-markets"></div>
+
+  <div class="section-header"><h2>Quick Access</h2></div>
+  <div class="grid-3">
+    <div class="quick-action" onclick="showScreen('watchlist')"><div class="qa-icon">★</div><div class="qa-label">Watchlist</div></div>
+    <div class="quick-action" onclick="showScreen('analytics')"><div class="qa-icon">📊</div><div class="qa-label">Analytics</div></div>
+    <div class="quick-action" onclick="showScreen('calendar')"><div class="qa-icon">📅</div><div class="qa-label">Calendar</div></div>
+  </div>
+</section>
+
+<!-- ============ MARKETS ============ -->
+<section id="screen-markets" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')" aria-label="Back">←</button>
+    <h1>Markets</h1><div style="width:36px"></div>
+  </div>
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--dim)"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="markets-search" placeholder="Search symbols" />
+  </div>
+  <div class="tabs" id="market-cat-tabs">
+    <button data-cat="forex" class="active">Forex</button>
+    <button data-cat="commodities">Commodities</button>
+    <button data-cat="indices">Indices</button>
+    <button data-cat="crypto">Crypto</button>
+  </div>
+  <div class="market-list" id="markets-list"></div>
+</section>
+
+<!-- ============ CHART ============ -->
+<section id="screen-chart" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('markets')">←</button>
+    <h1 id="chart-title">EUR/USD</h1>
+    <button class="icon-btn" onclick="toggleFav()" aria-label="Favorite" id="fav-btn">☆</button>
+  </div>
+  <div class="chart-hero">
+    <div class="row-between">
+      <div><div class="sym-name" id="chart-sym-name">EUR/USD</div><div class="sym-sub" id="chart-sym-sub">Euro / US Dollar</div></div>
+    </div>
+    <div class="sym-price mono up" id="chart-sym-price">1.08945</div>
+    <div class="sym-chg up" id="chart-sym-chg">+0.00320 (+0.32%)</div>
+    <div class="chart-stats">
+      <div>High<span id="cs-high">-</span></div>
+      <div>Low<span id="cs-low">-</span></div>
+      <div>Open<span id="cs-open">-</span></div>
+      <div>Close<span id="cs-close">-</span></div>
+    </div>
+    <div class="tf-row" id="tf-row">
+      <button data-tf="1m">1m</button>
+      <button data-tf="5m">5m</button>
+      <button data-tf="15m" class="active">15m</button>
+      <button data-tf="1h">1h</button>
+      <button data-tf="4h">4h</button>
+      <button data-tf="1d">1D</button>
+    </div>
+    <div id="chart-container"></div>
+    <div class="trade-cta">
+      <button class="buy" onclick="openOrder('buy')">Buy</button>
+      <button class="sell" onclick="openOrder('sell')">Sell</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLACE ORDER ============ -->
+<section id="screen-place" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('chart')">←</button>
+    <h1>Place Order</h1><div style="width:36px"></div>
+  </div>
+  <div class="card">
+    <div class="row-between"><div><div style="font-weight:700;font-size:16px" id="po-symbol">EUR/USD</div><div style="font-size:11px;color:var(--dim)" id="po-symbol-sub">Euro / US Dollar</div></div><div class="mono" style="font-weight:700;font-size:18px" id="po-price">1.08945</div></div>
+  </div>
+  <div class="order-type-tabs">
+    <button data-otype="market" class="active">Market</button>
+    <button data-otype="limit">Limit</button>
+    <button data-otype="stop">Stop</button>
+  </div>
+  <div class="order-side">
+    <button id="po-buy-btn" class="active-buy" onclick="setSide('buy')">Buy</button>
+    <button id="po-sell-btn" onclick="setSide('sell')">Sell</button>
+  </div>
+  <div class="field">
+    <div class="lbl">Volume (Lots)</div>
+    <div class="val">
+      <div class="stepper"><button onclick="stepVol(-0.1)">−</button></div>
+      <input id="po-lots" type="number" min="0.01" step="0.01" value="1.00" style="text-align:center" />
+      <div class="stepper"><button onclick="stepVol(0.1)">+</button></div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="lbl">Leverage</div>
+    <div class="val"><select id="po-leverage"><option>1:50</option><option selected>1:100</option><option>1:200</option><option>1:500</option></select></div>
+  </div>
+  <div class="field">
+    <div class="lbl">Take Profit</div>
+    <div class="val"><input id="po-tp" type="number" step="0.00001" placeholder="Optional" /></div>
+  </div>
+  <div class="field">
+    <div class="lbl">Stop Loss</div>
+    <div class="val"><input id="po-sl" type="number" step="0.00001" placeholder="Optional" /></div>
+  </div>
+  <button id="po-submit" class="submit-btn buy" onclick="submitOrder()">Buy EUR/USD @ <span id="po-submit-price">1.08945</span></button>
+  <div class="row-between" style="margin-top:14px;padding:0 4px;font-size:12px;color:var(--dim)">
+    <span>Margin Required</span><span class="mono" id="po-margin" style="color:var(--text);font-weight:600">$0.00</span>
+  </div>
+  <div class="row-between" style="margin-top:6px;padding:0 4px;font-size:12px;color:var(--dim)">
+    <span>Free Margin</span><span class="mono" id="po-free" style="color:var(--text);font-weight:600">$0.00</span>
+  </div>
+</section>
+
+<!-- ============ POSITIONS ============ -->
+<section id="screen-positions" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Positions</h1>
+    <button class="icon-btn" onclick="loadPositions()" aria-label="Refresh">↻</button>
+  </div>
+  <div class="tabs" id="pos-tabs">
+    <button data-pos="open" class="active">Open (<span id="pos-open-count">0</span>)</button>
+    <button data-pos="closed">Closed</button>
+  </div>
+  <div class="card" style="text-align:center;padding:14px">
+    <div style="font-size:11px;color:var(--dim);letter-spacing:.5px">TOTAL P&amp;L</div>
+    <div class="mono" style="font-size:24px;font-weight:800;margin-top:4px" id="pos-total-pnl">$0.00</div>
+  </div>
+  <div id="positions-list" style="margin-top:14px"></div>
+</section>
+
+<!-- ============ ORDERS (pending/history) ============ -->
+<section id="screen-orders" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Orders</h1><div style="width:36px"></div>
+  </div>
+  <div class="tabs" id="orders-tabs">
+    <button data-ord="open" class="active">Open Orders</button>
+    <button data-ord="pending">Pending Orders</button>
+  </div>
+  <div id="orders-list"></div>
+</section>
+
+<!-- ============ WATCHLIST ============ -->
+<section id="screen-watchlist" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Watchlist</h1>
+    <button class="icon-btn" onclick="editWatchlist()">✎</button>
+  </div>
+  <div class="tabs">
+    <button class="active">Forex</button>
+    <button>Commodities</button>
+    <button>Indices</button>
+  </div>
+  <div class="market-list" id="watchlist-list"></div>
+</section>
+
+<!-- ============ WALLET ============ -->
+<section id="screen-wallet" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Wallet</h1><div style="width:36px"></div>
+  </div>
+  <div class="tabs">
+    <button class="active" data-wl="overview">Overview</button>
+    <button data-wl="txn">Transactions</button>
+    <button data-wl="history">History</button>
+  </div>
+  <div class="wallet-hero">
+    <div class="label">Total Balance</div>
+    <div class="amount" id="wallet-total">$0.00</div>
+    <div style="font-size:11px;opacity:.8;margin-top:4px">USD</div>
+  </div>
+  <div class="grid-2" style="margin-top:12px">
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Balance</div><div class="mono" style="font-size:18px;font-weight:700;margin-top:4px" id="wallet-balance">$0.00</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Profit &amp; Loss</div><div class="mono up" style="font-size:18px;font-weight:700;margin-top:4px" id="wallet-pnl">+$0.00</div></div>
+  </div>
+  <div class="wallet-actions">
+    <button onclick="showToast('Contact support to deposit')">Deposit</button>
+    <button onclick="showToast('Contact support to withdraw')">Withdraw</button>
+    <button onclick="showToast('Transfer coming soon')">Transfer</button>
+    <button onclick="showToast('Convert coming soon')">Convert</button>
+  </div>
+  <div class="section-header"><h2>Recent Transactions</h2><a>View All →</a></div>
+  <div class="card" id="wallet-txn-list"></div>
+</section>
+
+<!-- ============ PROFILE ============ -->
+<section id="screen-profile" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Profile</h1><div style="width:36px"></div>
+  </div>
+  <div class="card" style="text-align:center;padding:24px 16px">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--grad);color:#fff;font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px" id="profile-avatar">GX</div>
+    <div style="font-weight:700;font-size:18px" id="profile-name">Trader</div>
+    <div style="font-size:12px;color:var(--dim);margin-top:2px" id="profile-plan">Stellar 1 · Trader</div>
+    <div style="margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.15);color:var(--up);display:inline-block;border-radius:999px;font-size:11px;font-weight:600" id="profile-verified">✓ Verified</div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="setting-row"><div class="lbl">Account Type</div><div class="val" id="pr-plan">Stellar 1</div></div>
+    <div class="setting-row"><div class="lbl">Leverage</div><div class="val" id="pr-lev">1:100</div></div>
+    <div class="setting-row"><div class="lbl">Account Balance</div><div class="val mono" id="pr-bal">$0.00</div></div>
+    <div class="setting-row"><div class="lbl">Equity</div><div class="val mono" id="pr-eq">$0.00</div></div>
+    <div class="setting-row"><div class="lbl">Free Margin</div><div class="val mono" id="pr-free">$0.00</div></div>
+    <div class="setting-row"><div class="lbl">Margin Level</div><div class="val mono" id="pr-marlev">-</div></div>
+  </div>
+</section>
+
+<!-- ============ ANALYTICS ============ -->
+<section id="screen-analytics" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Analytics</h1><div style="width:36px"></div>
+  </div>
+  <div class="tabs">
+    <button class="active">Performance</button>
+    <button>Statistics</button>
+    <button>Reports</button>
+  </div>
+  <div class="card">
+    <div style="font-size:11px;color:var(--dim);text-transform:uppercase">Total Profit</div>
+    <div class="mono up" style="font-size:22px;font-weight:800;margin-top:4px" id="an-total-profit">+$0.00</div>
+    <div id="analytics-chart" style="height:180px;margin-top:14px;border-radius:12px;background:#0a1220"></div>
+  </div>
+  <div class="grid-2" style="margin-top:12px">
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Winning Trades</div><div class="mono up" style="font-size:20px;font-weight:800;margin-top:4px" id="an-winrate">0.0%</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Total Trades</div><div class="mono" style="font-size:20px;font-weight:800;margin-top:4px" id="an-total">0</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Profit Factor</div><div class="mono" style="font-size:20px;font-weight:800;margin-top:4px" id="an-pf">-</div></div>
+    <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Max Drawdown</div><div class="mono down" style="font-size:20px;font-weight:800;margin-top:4px" id="an-dd">0.0%</div></div>
+  </div>
+</section>
+
+<!-- ============ CALENDAR ============ -->
+<section id="screen-calendar" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Economic Calendar</h1><div style="width:36px"></div>
+  </div>
+  <div class="cal-tabs" id="cal-tabs"></div>
+  <div class="card" id="cal-list" style="padding:0"></div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section id="screen-settings" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <h1>Settings</h1><div style="width:36px"></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="setting-row" onclick="showScreen('profile')"><div class="icon">👤</div><div class="lbl">Account</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon">🔒</div><div class="lbl">Security</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon">⚙️</div><div class="lbl">Preferences</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon">🔔</div><div class="lbl">Notifications</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon">🎨</div><div class="lbl">Theme</div><div class="val">Stellar Dark</div></div>
+    <div class="setting-row"><div class="icon">🌐</div><div class="lbl">Language</div><div class="val">English</div></div>
+    <div class="setting-row"><div class="icon">💬</div><div class="lbl">Support Center</div><div class="val">›</div></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;margin-top:12px">
+    <div class="setting-row logout-row" onclick="logout()"><div class="icon">⎋</div><div class="lbl">Log Out</div><div class="val">›</div></div>
+  </div>
+</section>
+
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="bottom-nav">
+  <div class="tab active" data-tab="home" onclick="showScreen('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+  <div class="tab" data-tab="markets" onclick="showScreen('markets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>Markets</div>
+  <div class="tab" data-tab="chart" onclick="showScreen('chart')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 14l3-3 3 3 4-5"/></svg>Trade</div>
+  <div class="tab" data-tab="positions" onclick="showScreen('positions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>Positions</div>
+  <div class="tab" data-tab="wallet" onclick="showScreen('wallet')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h2"/></svg>Wallet</div>
+</nav>
+
+<script src="assets/js/trade-terminal.js"></script>
+</body>
+</html>

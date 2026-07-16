@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Payment — Growx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <span class="nav-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span>Funded<span class="text-grad-gold">NXT</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="accounts.html" class="active">Accounts</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+    <button class="nav-burger" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Stepper -->
+<section style="padding:140px 0 30px;">
+  <div class="container">
+    <div class="stepper">
+      <div class="step done">
+        <div class="step-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="step-label">Conditions</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step done">
+        <div class="step-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="step-label">Payment</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step active">
+        <div class="step-circle">3</div>
+        <div class="step-label">Verify</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-label">Credentials</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container" style="max-width:920px;">
+
+    <div class="reveal text-center" style="margin-bottom:32px;">
+      <div class="hero-badge" style="background:rgba(6,212,255,0.08);border-color:rgba(6,212,255,0.3);color:var(--accent-cyan);">
+        <span class="hero-badge-dot" style="background:var(--accent-cyan);box-shadow:0 0 12px var(--accent-cyan);"></span>
+        Verifying transaction — almost there
+      </div>
+      <h1 class="h-1" style="margin: 18px 0 12px;">Submit your <span class="text-grad-gold">transaction details</span></h1>
+      <p class="lead" style="margin: 0 auto;">Upload a screenshot of your transaction and paste the transaction hash. Our team will verify it within 24 hours.</p>
+    </div>
+
+    <!-- Verifying animation -->
+    <div class="reveal text-center" style="margin-bottom:40px;">
+      <div class="verify-loader">
+        <div class="verify-loader-center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+      </div>
+      <div style="margin-top:20px;color:var(--accent-gold);font-weight:600;font-size:1.05rem;letter-spacing:0.04em;display:inline-flex;align-items:center;gap:8px;">
+        <span class="pulse-dot"></span> Verifying payment received…
+      </div>
+      <div style="color:var(--text-muted);font-size:0.92rem;margin-top:6px;">Drop in your transaction details below</div>
+    </div>
+
+    <!-- Form -->
+    <form id="verify-form" class="glass-strong reveal delay-1" style="padding:36px;border-radius:22px;display:flex;flex-direction:column;gap:24px;">
+
+      <!-- Upload zone -->
+      <div>
+        <label style="display:block;font-size:0.92rem;color:var(--text-secondary);margin-bottom:10px;font-weight:500;">Upload transaction screenshot</label>
+        <label for="txn-img" class="glass" style="padding:32px;border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;border:2px dashed var(--border-subtle);transition:all .3s;">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-weight:600;">Drop your screenshot here or click to browse</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">PNG, JPG up to 10MB</div>
+          <input type="file" id="txn-img" accept="image/*" style="display:none;" />
+        </label>
+        <div id="file-name" style="margin-top:10px;color:var(--accent-emerald);font-size:0.88rem;display:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>File selected</span>
+        </div>
+      </div>
+
+      <!-- Hash input -->
+      <div>
+        <label for="txn-hash" style="display:block;font-size:0.92rem;color:var(--text-secondary);margin-bottom:10px;font-weight:500;">Paste transaction hash (TxID)</label>
+        <textarea id="txn-hash" class="textarea" placeholder="e.g. 0x9e1a8c2b7d4f5e6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b..." rows="3"></textarea>
+        <div style="color:var(--text-muted);font-size:0.8rem;margin-top:6px;">The TxID is typically found in your wallet's "Send" or "History" tab.</div>
+      </div>
+
+      <!-- Network summary -->
+      <div class="glass" style="padding:18px 22px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Account</div>
+          <div style="font-weight:600;margin-top:2px;" id="order-plan">Stellar 1</div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Network</div>
+          <div style="font-weight:600;margin-top:2px;color:var(--accent-gold);" id="order-network">TRC20</div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Amount</div>
+          <div style="font-weight:600;margin-top:2px;color:var(--accent-gold);" id="order-amount">$159 USDT</div>
+        </div>
+      </div>
+
+      <div class="text-center mt-md">
+        <button type="submit" class="btn btn-gold btn-lg">
+          Submit for Verification
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px;"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <div style="color:var(--text-muted);font-size:0.85rem;margin-top:14px;">
+          Your credentials will be issued within 24 hours after verification.
+        </div>
+      </div>
+    </form>
+
+  </div>
+</section>
+
+<script>
+// Fill order summary from URL / localStorage
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = localStorage.getItem('fnx_plan') || params.get('plan') || 'Stellar 1';
+  const net = (localStorage.getItem('fnx_network') || params.get('net') || 'TRC20').toUpperCase();
+  const price = localStorage.getItem('fnx_price') || '159';
+  const planEl = document.getElementById('order-plan');
+  const netEl = document.getElementById('order-network');
+  const amtEl = document.getElementById('order-amount');
+  if (planEl) planEl.textContent = plan;
+  if (netEl) netEl.textContent = net;
+  if (amtEl) amtEl.textContent = '$' + price + ' USDT';
+
+  // File name display
+  const fileInput = document.getElementById('txn-img');
+  const fileName = document.getElementById('file-name');
+  if (fileInput && fileName) {
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        fileName.style.display = 'block';
+        fileName.lastElementChild.textContent = 'Selected: ' + fileInput.files[0].name;
+      }
+    });
+  }
+
+  /* ============================================================
+     Verify form submit — POSTs TxID to backend, then on success
+     requests /api/trade/issue to generate Stellar Trade Terminal
+     credentials (Trade ID + password) and shows the modal.
+     ============================================================ */
+  const verifyForm = document.getElementById('verify-form');
+  if (verifyForm) {
+    // Capture-phase interception (main.js also has a fallback handler)
+    verifyForm.addEventListener('submit', async function (e) {
+      // Only intercept if the basic client-side validation passes.
+      const hashInput = document.getElementById('txn-hash');
+      const hashVal = (hashInput?.value || '').trim();
+      if (!hashVal || hashVal.length < 10) return; // let the main.js fallback toast
+
+      // Block default redirect-to-waiting.html; do everything via fetch.
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const submitBtn = verifyForm.querySelector('button[type="submit"]');
+      const orig = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="pulse-dot"></span> Verifying on chain…';
+
+      // Step 1: fire the verification event (best-effort, does not block).
+      try {
+        fetch('/api/track', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'verification_submitted',
+            payload: { network: net, hash: hashVal, amount_usd: parseFloat(price) || 0 },
+            page: 'verify.html'
+          })
+        }).catch(() => {});
+      } catch (_) {}
+
+      // Step 2: ask the backend to issue Stellar Trade Terminal credentials.
+      // Without an active growx_session this will 401 — we surface that nicely.
+      let creds = null;
+      try {
+        const r = await fetch('/api/trade/issue', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        creds = await r.json().catch(() => ({}));
+        if (!r.ok || !creds.ok) creds = null;
+      } catch (_) { creds = null; }
+
+      // Brief "verifying" animation (1.2s) so it feels real, then modal.
+      setTimeout(() => {
+        submitBtn.innerHTML = '<span class="pulse-dot"></span> Issuing credentials…';
+      }, 600);
+
+      setTimeout(() => {
+        if (creds && creds.trade_id) {
+          showCredentialsModal(creds, plan, net, price);
+        } else {
+          // No session OR no order yet — still let them proceed to the
+          // standard waiting page (their TxID was logged event-side).
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = orig;
+          if (window.fnxToast) window.fnxToast('Credentials will be issued after admin verification — we sent you an email', 'success');
+          setTimeout(() => { window.location.href = 'waiting.html'; }, 800);
+        }
+      }, 1400);
+    }, true);
+  }
+
+  function showCredentialsModal(creds, plan, net, price) {
+    let modal = document.getElementById('credentials-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'credentials-modal';
+      modal.className = 'verify-overlay';
+      modal.innerHTML = `
+        <div class="verify-stage" style="width:90px;height:90px;">
+          <div class="verify-rings"><span></span><span></span><span></span></div>
+          <div class="verify-orbit"></div>
+          <div class="verify-center" style="background:linear-gradient(135deg,#10b981,#00E676);color:#070B18;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+        </div>
+        <div class="verify-title" style="margin-top:24px;">Your Trade Terminal is ready</div>
+        <div class="verify-sub" style="margin-top:8px;max-width:520px;">
+          We've provisioned your <strong id="cm-plan" style="color:var(--accent-gold);">Stellar 1</strong> account.
+          Save your Trade ID and password — you can also change the password after your first login.
+        </div>
+        <div class="glass-strong" style="margin-top:24px;padding:24px;border-radius:18px;width:min(560px,92vw);display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;">
+          <div>
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:6px;">Trade ID</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div id="cm-trade-id" style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.15rem;color:var(--accent-gold);">FNX-XXXXXX</div>
+              <button data-copy-cm="cm-trade-id" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:0.78rem;">Copy</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:6px;">Password</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div id="cm-password" style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.15rem;color:var(--text-primary);">••••••••</div>
+              <button data-copy-cm="cm-password" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:0.78rem;">Copy</button>
+            </div>
+          </div>
+          <div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;">
+            <div class="glass" style="padding:10px 12px;text-align:center;">
+              <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Plan</div>
+              <div id="cm-plan-2" style="font-weight:700;margin-top:2px;">Stellar 1</div>
+            </div>
+            <div class="glass" style="padding:10px 12px;text-align:center;">
+              <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Balance</div>
+              <div id="cm-balance" style="font-weight:700;margin-top:2px;color:var(--accent-gold);">$10,000</div>
+            </div>
+            <div class="glass" style="padding:10px 12px;text-align:center;">
+              <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Leverage</div>
+              <div id="cm-lev" style="font-weight:700;margin-top:2px;color:var(--accent-cyan);">1:100</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <button id="cm-launch" class="btn btn-gold btn-lg pulse-highlight">
+            Launch Trade Terminal
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+          <button id="cm-email" class="btn btn-ghost btn-lg" style="border-color:rgba(6,212,255,0.3);color:var(--accent-cyan);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+            Email me these
+          </button>
+        </div>
+        <div style="margin-top:14px;color:var(--text-muted);font-size:0.78rem;max-width:520px;">
+          Tip: Bookmark <a href="trade-terminal-login.html" style="color:var(--accent-gold);font-weight:600;">trade-terminal-login.html</a> for quick re-entry. Your credentials work on any device.
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      // Wire up copy buttons (data-copy-cm="<elementId>")
+      modal.querySelectorAll('[data-copy-cm]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const el = document.getElementById(btn.dataset.copyCm);
+          if (!el) return;
+          const text = el.textContent.trim();
+          navigator.clipboard?.writeText(text);
+          const o = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = o; }, 1200);
+        });
+      });
+
+      // Launch button — saves to localStorage as a fallback and navigates.
+      document.getElementById('cm-launch').addEventListener('click', () => {
+        try {
+          localStorage.setItem('stx_pending_login', JSON.stringify({
+            trade_id: creds.trade_id,
+            password: creds.password,
+            plan: creds.plan,
+            balance: creds.balance
+          }));
+        } catch (_) {}
+        window.location.href = 'trade-terminal-login.html';
+      });
+
+      // Email button — best-effort: ping /api/track so admin can follow up.
+      document.getElementById('cm-email').addEventListener('click', () => {
+        try {
+          fetch('/api/track', {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event: 'trade.credentials.email_requested',
+              payload: { trade_id: creds.trade_id, plan: creds.plan },
+              page: 'verify.html'
+            })
+          }).catch(() => {});
+        } catch (_) {}
+        if (window.fnxToast) window.fnxToast('Sent — check your inbox in a few minutes', 'success');
+        document.getElementById('cm-email').textContent = 'Sent ✓';
+        document.getElementById('cm-email').disabled = true;
+      });
+    }
+
+    // Fill the modal
+    document.getElementById('cm-trade-id').textContent = creds.trade_id;
+    document.getElementById('cm-password').textContent = creds.password || '••••••••';
+    document.getElementById('cm-plan').textContent = creds.plan || plan;
+    document.getElementById('cm-plan-2').textContent = creds.plan || plan;
+    document.getElementById('cm-balance').textContent = '$' + Number(creds.balance || 0).toLocaleString('en-US');
+    document.getElementById('cm-lev').textContent = '1:' + (creds.leverage || 100);
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // =====================================================================
+  // Auto-show credentials modal on page load (refresh-safe)
+  // ---------------------------------------------------------------------
+  // When the user refreshes verify.html AFTER completing purchase, we call
+  // /api/auth/me to confirm growx_session is present, then POST
+  // /api/trade/issue. The backend rotates the password on every re-issue
+  // and returns the fresh one, so the modal re-populates with valid
+  // login details. We also stash stx_pending_login so that the
+  // trade-terminal-login page auto-fills on the next click.
+  // Silent no-op when no growx_session or no trade account yet.
+  // =====================================================================
+  (async function stxAutoShowCreds() {
+    try {
+      // Dedupe: skip if we already showed the modal within the last 30 s.
+      // Prevents double-display when the user submits the form AND
+      // refreshes within seconds.
+      try {
+        var lastRendered = parseInt(localStorage.getItem('fnx_creds_rendered_at') || '0', 10);
+        if (!isNaN(lastRendered) && (Date.now() - lastRendered) < 30000) return;
+      } catch (_) { /* noop */ }
+
+      var me = await fetch('/api/auth/me', { credentials: 'include' })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+      if (!me || !me.ok || !me.user) return;
+      var issue = await fetch('/api/trade/issue', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      }).then(function (r) { return r && r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+      if (!issue || !issue.ok || !issue.trade_id) return;
+
+      // Self-debounce the modal render (also prevents auto-show + form-submit
+      // both opening the modal in quick succession).
+      try { localStorage.setItem('fnx_creds_rendered_at', String(Date.now())); } catch (_) {}
+
+      try {
+        localStorage.setItem('stx_pending_login', JSON.stringify({
+          trade_id: issue.trade_id,
+          password: issue.password || null,
+          plan: issue.plan,
+          balance: issue.balance
+        }));
+      } catch (_) {}
+      var plan2  = (function () { try { return localStorage.getItem('fnx_plan')    || issue.plan || 'Stellar 1'; } catch (_) { return 'Stellar 1'; } })();
+      var net2   = (function () { try { return (localStorage.getItem('fnx_network') || 'TRC20').toUpperCase(); } catch (_) { return 'TRC20'; } })();
+      var price2 = (function () { try { return localStorage.getItem('fnx_price')   || '159';                      } catch (_) { return '159';      } })();
+
+      // Don't re-open the modal if it's already visible (the form-submit
+      // handler may have shown it a moment earlier).
+      var existingModal = document.getElementById('credentials-modal');
+      if (existingModal && existingModal.classList.contains('active')) return;
+
+      showCredentialsModal(issue, plan2, net2, price2);
+    } catch (_) {
+      // Refresh-load failure is non-fatal — user can re-submit the verify
+      // form to get the credentials modal through the regular path.
+    }
+  })();
+})();
+</script>
+<script src="assets/js/reporter.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+</body>
+</html>

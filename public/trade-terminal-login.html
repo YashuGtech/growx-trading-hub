@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stellar Trade Terminal — Login</title>
+  <meta name="theme-color" content="#070B18" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --st-bg: #070B18;
+      --st-bg-2: #0A1024;
+      --st-card: #101827;
+      --st-border: #1F2B45;
+      --st-border-2: #2A3A5C;
+      --st-blue: #3B82F6;
+      --st-blue-light: #60A5FA;
+      --st-purple: #7C5CFF;
+      --st-purple-light: #A78BFA;
+      --st-buy: #00E676;
+      --st-sell: #FF4D57;
+      --st-text: #FFFFFF;
+      --st-text-2: #A9B4C7;
+      --st-text-3: #6B7896;
+      --st-glow-blue: 0 0 24px rgba(59, 130, 246, 0.4);
+      --st-glow-purple: 0 0 24px rgba(124, 92, 255, 0.4);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--st-bg);
+      color: var(--st-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+    button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+    input { font: inherit; color: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .app-bg {
+      position: fixed; inset: 0; z-index: -2;
+      background:
+        radial-gradient(ellipse at top, rgba(59, 130, 246, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom right, rgba(124, 92, 255, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom left, rgba(0, 230, 118, 0.06) 0%, transparent 60%),
+        var(--st-bg);
+    }
+    .app-stars {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.5) 50%, transparent 100%),
+        radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.3) 50%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.4) 50%, transparent 100%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.3) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 10% 90%, rgba(59, 130, 246, 0.6) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 10%, rgba(124, 92, 255, 0.5) 50%, transparent 100%);
+      background-size: 350px 350px;
+      animation: starDrift 80s linear infinite;
+    }
+    @keyframes starDrift { from { background-position: 0 0; } to { background-position: 350px 350px; } }
+
+    /* ============ TOP NAV ============ */
+    .topnav {
+      padding: 18px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon {
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--st-blue), var(--st-purple));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--st-glow-blue);
+    }
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+    .brand-name span { color: var(--st-blue); }
+    .topnav-right { display: flex; align-items: center; gap: 10px; }
+    .topnav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: rgba(16, 24, 39, 0.6);
+      border: 1px solid var(--st-border);
+      border-radius: 999px;
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--st-text-2);
+      transition: all 0.2s;
+    }
+    .topnav-back:hover { background: rgba(16, 24, 39, 0.9); color: var(--st-text); }
+
+    /* ============ MAIN ============ */
+    main {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px 60px;
+    }
+    .login-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 60px;
+      align-items: center;
+      max-width: 1080px;
+      width: 100%;
+    }
+    @media (max-width: 880px) {
+      .login-grid { grid-template-columns: 1fr; gap: 30px; }
+      .promo-side { display: none; }
+    }
+
+    /* Promo side */
+    .promo-side { padding-right: 20px; }
+    .promo-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--st-blue-light);
+      margin-bottom: 22px;
+    }
+    .promo-badge .dot {
+      width: 8px; height: 8px;
+      background: var(--st-blue-light);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--st-blue-light);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+    .promo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 18px;
+    }
+    .promo-title span {
+      background: linear-gradient(135deg, var(--st-blue), var(--st-purple));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .promo-sub {
+      color: var(--st-text-2);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 0 28px;
+    }
+    .feature-pills { display: flex; flex-direction: column; gap: 12px; max-width: 460px; }
+    .feature-pill {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      background: rgba(16, 24, 39, 0.5);
+      border: 1px solid var(--st-border);
+      border-radius: 14px;
+      font-size: 0.92rem;
+    }
+    .feature-pill .ic {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .feature-pill .ic.blue { background: rgba(59, 130, 246, 0.18); color: var(--st-blue); }
+    .feature-pill .ic.purple { background: rgba(124, 92, 255, 0.18); color: var(--st-purple); }
+    .feature-pill .ic.green { background: rgba(0, 230, 118, 0.18); color: var(--st-buy); }
+    .feature-pill .ic.red { background: rgba(255, 77, 87, 0.18); color: var(--st-sell); }
+    .feature-pill .text { font-weight: 600; }
+    .feature-pill .sub { font-size: 0.78rem; color: var(--st-text-2); margin-top: 2px; }
+
+    /* Login card */
+    .login-card {
+      position: relative;
+      padding: 36px;
+      background: linear-gradient(160deg, rgba(16, 24, 39, 0.85), rgba(16, 24, 39, 0.55));
+      border: 1px solid var(--st-border);
+      border-radius: 24px;
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(59, 130, 246, 0.08);
+      overflow: hidden;
+    }
+    .login-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--st-blue), var(--st-purple), transparent);
+    }
+    .login-head {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 26px;
+    }
+    .login-head .glyph {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--st-blue), var(--st-purple));
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      box-shadow: var(--st-glow-blue);
+    }
+    .login-head h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem; font-weight: 700; margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .login-head p {
+      color: var(--st-text-2);
+      font-size: 0.88rem; margin: 2px 0 0;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--st-text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap svg {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--st-text-3);
+      pointer-events: none;
+    }
+    .field input {
+      width: 100%;
+      padding: 14px 14px 14px 44px;
+      background: rgba(7, 11, 24, 0.7);
+      border: 1px solid var(--st-border);
+      border-radius: 12px;
+      color: var(--st-text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .field input:focus {
+      border-color: var(--st-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+      background: rgba(7, 11, 24, 0.9);
+    }
+    .field input::placeholder {
+      color: var(--st-text-3);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+    }
+    .toggle-pw {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--st-text-3);
+      padding: 6px;
+      border-radius: 8px;
+      transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: var(--st-blue); }
+
+    .err-banner {
+      display: none;
+      align-items: center; gap: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      background: rgba(255, 77, 87, 0.08);
+      border: 1px solid rgba(255, 77, 87, 0.3);
+      border-radius: 12px;
+      color: var(--st-sell);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .err-banner.show { display: flex; }
+    .err-banner .ic {
+      width: 28px; height: 28px;
+      background: rgba(255, 77, 87, 0.18);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--st-blue), var(--st-purple));
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+      margin-top: 8px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.55), 0 0 24px rgba(124, 92, 255, 0.4);
+    }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .submit-btn .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .helper-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid var(--st-border);
+      font-size: 0.85rem;
+    }
+    .helper-row .left { color: var(--st-text-2); }
+    .helper-row .right a {
+      color: var(--st-blue);
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .helper-row .right a:hover { color: var(--st-blue-light); }
+
+    .security-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 18px;
+      padding: 10px 14px;
+      background: rgba(0, 230, 118, 0.05);
+      border: 1px solid rgba(0, 230, 118, 0.18);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      color: var(--st-text-2);
+    }
+    .security-row svg { color: var(--st-buy); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div class="app-bg"></div>
+<div class="app-stars"></div>
+
+<header class="topnav">
+  <a href="home.html" class="brand">
+    <span class="brand-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M8 16L12 7l4 9"/><path d="M9.5 13h5"/>
+      </svg>
+    </span>
+    <span class="brand-name">Stellar<span>·</span>Trade Terminal</span>
+  </a>
+  <div class="topnav-right">
+    <a href="home.html" class="topnav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to home
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="login-grid">
+
+    <!-- Promo side -->
+    <section class="promo-side">
+      <div class="promo-badge"><span class="dot"></span> Institutional-grade · Virtual trading · 100x leverage</div>
+      <h1 class="promo-title">Welcome to <span>Stellar Trade Terminal</span></h1>
+      <p class="promo-sub">Trade Forex, Metals, Indices and Crypto with virtual capital up to 100x leverage. Powered by live TradingView charts and a glassmorphism dashboard tuned for speed.</p>
+
+      <div class="feature-pills">
+        <div class="feature-pill">
+          <div class="ic blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>
+          </div>
+          <div>
+            <div class="text">Live TradingView charts</div>
+            <div class="sub">Candles, indicators, drawing tools</div>
+          </div>
+        </div>
+        <div class="feature-pill">
+          <div class="ic purple">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <div class="text">Up to 1:100 leverage</div>
+            <div class="sub">100x on FX majors · Metals · Indices</div>
+          </div>
+        </div>
+        <div class="feature-pill">
+          <div class="ic green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          </div>
+          <div>
+            <div class="text">Real-time P&L</div>
+            <div class="sub">Equity, margin level, and used margin</div>
+          </div>
+        </div>
+        <div class="feature-pill">
+          <div class="ic red">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <div class="text">Encrypted session</div>
+            <div class="sub">HttpOnly JWT · 7-day cookie</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login card -->
+    <section class="login-card">
+      <div class="login-head">
+        <div class="glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h1>Sign in to Terminal</h1>
+          <p>Enter the credentials we sent after your payment.</p>
+        </div>
+      </div>
+
+      <div id="err" class="err-banner">
+        <div class="ic">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <span id="err-msg">Invalid credentials</span>
+      </div>
+
+      <form id="login-form" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="trade-id">Trade ID</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 20a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+            <input id="trade-id" name="trade_id" type="text" placeholder="FNX-XXXXXX" autocapitalize="characters" autocomplete="off" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pw">Password</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input id="pw" name="password" type="password" placeholder="Your terminal password" autocomplete="current-password" required />
+            <button type="button" class="toggle-pw" id="toggle-pw" aria-label="Show password">
+              <svg id="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="submit" class="submit-btn">
+          <span class="lbl">Launch Terminal</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div class="security-row">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Your session is encrypted. We never see your password after login.</span>
+      </div>
+
+      <div class="helper-row">
+        <div class="left">Don't have credentials?</div>
+        <div class="right">
+          <a href="accounts.html">View funded accounts →</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ===========================================================
+     1. Pre-fill from URL or from the previous page's modal
+     =========================================================== */
+  const params = new URLSearchParams(window.location.search);
+  const preId  = params.get('tid');
+  const prePw  = params.get('pw');
+  let pending = null;
+  try { pending = JSON.parse(localStorage.getItem('stx_pending_login') || 'null'); } catch (_) {}
+
+  const idEl = document.getElementById('trade-id');
+  const pwEl = document.getElementById('pw');
+  if (preId)  idEl.value = preId.toUpperCase();
+  if (prePw)  pwEl.value = prePw;
+  else if (pending && pending.trade_id && pending.password) {
+    idEl.value = pending.trade_id;
+    pwEl.value = pending.password;
+  }
+
+  // Force uppercase on Trade ID as the user types.
+  idEl.addEventListener('input', () => {
+    const pos = idEl.selectionStart;
+    idEl.value = idEl.value.toUpperCase().replace(/\s/g, '');
+    if (pos != null) idEl.setSelectionRange(pos, pos);
+  });
+
+  /* ===========================================================
+     2. Toggle password visibility
+     =========================================================== */
+  const togglePw = document.getElementById('toggle-pw');
+  togglePw.addEventListener('click', () => {
+    const showing = pwEl.type === 'text';
+    pwEl.type = showing ? 'password' : 'text';
+    togglePw.innerHTML = showing
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+  });
+
+  /* ===========================================================
+     3. Submit → POST /api/trade/login → set localStorage + redirect
+     =========================================================== */
+  const form = document.getElementById('login-form');
+  const submitBtn = document.getElementById('submit');
+  const errBanner = document.getElementById('err');
+  const errMsg = document.getElementById('err-msg');
+
+  function showErr(msg) {
+    errMsg.textContent = msg;
+    errBanner.classList.add('show');
+    // Re-trigger the shake animation
+    errBanner.style.animation = 'none';
+    void errBanner.offsetWidth;
+    errBanner.style.animation = 'shake 0.4s';
+  }
+  // Append the shake keyframe once.
+  const style = document.createElement('style');
+  style.textContent = '@keyframes shake { 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(3px)} 30%,50%,70%{transform:translateX(-5px)} 40%,60%{transform:translateX(5px)} }';
+  document.head.appendChild(style);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errBanner.classList.remove('show');
+
+    const trade_id = (idEl.value || '').trim().toUpperCase();
+    const password = pwEl.value || '';
+    if (!trade_id || !password) {
+      showErr('Please enter both your Trade ID and password');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span><span class="lbl">Signing you in…</span>';
+
+    try {
+      const res = await fetch('/api/trade/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ trade_id, password })
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        const map = {
+          invalid_credentials: 'Wrong Trade ID or password',
+          account_disabled:   'This trading account is disabled — contact support',
+          rate_limited:       'Too many attempts — please wait a moment',
+        };
+        showErr(map[data.error] || 'Sign-in failed — please try again');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="lbl">Launch Terminal</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+        return;
+      }
+
+      // Success — persist the session for the SPA-style trade-terminal-app.html
+      try {
+        localStorage.setItem('stx_session', JSON.stringify(data.account));
+        localStorage.removeItem('stx_pending_login'); // one-time use
+      } catch (_) {}
+
+      submitBtn.innerHTML = '<span class="lbl">Launching…</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>';
+
+      // Short delay so the success state is visible before the swap.
+      setTimeout(() => {
+        window.location.href = 'trade-terminal-app.html';
+      }, 450);
+    } catch (_) {
+      showErr('Network error — please try again');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span class="lbl">Launch Terminal</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+    }
+  });
+
+  // Press Enter on Trade ID auto-focuses password.
+  idEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); pwEl.focus(); }
+  });
+})();
+</script>
+
+</body>
+</html>
