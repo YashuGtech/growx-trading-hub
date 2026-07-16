@@ -138,6 +138,18 @@
       else continueBtn.classList.remove('pulse-highlight');
     };
     setContinueState(false);
+    continueBtn.addEventListener('click', () => {
+      if (continueBtn.disabled) return;
+      const params = new URLSearchParams(window.location.search);
+      const plan = localStorage.getItem('fnx_plan') || params.get('plan') || '';
+      const balance = localStorage.getItem('fnx_balance') || params.get('balance') || '';
+      const price = localStorage.getItem('fnx_price') || params.get('price') || '';
+      const qs = new URLSearchParams();
+      if (plan) qs.set('plan', plan);
+      if (balance) qs.set('balance', balance);
+      if (price) qs.set('price', price);
+      window.location.href = 'payment.html' + (qs.toString() ? '?' + qs.toString() : '');
+    });
     if (agreeAll) {
       agreeAll.addEventListener('change', (e) => {
         const checked = e.target.checked;
