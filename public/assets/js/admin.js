@@ -1774,6 +1774,12 @@ function setupDelegatedEvents() {
   // Dashboard refresh
   el('#dash-refresh')?.addEventListener('click', () => { renderDashboard(); toast('Dashboard refreshed', 'info'); });
 
+  // Live auto-refresh — re-render the active pane every 10s so newly issued
+  // trade accounts, orders and deposits appear without a manual reload.
+  setInterval(() => {
+    try { initPane(FNX.state.activePane || 'dashboard'); } catch (_) {}
+  }, 10000);
+
   // Quick actions on dashboard (bind ONCE — these DOM nodes are static in HTML).
   document.querySelectorAll('[data-quick]').forEach(elx => {
     elx.addEventListener('click', () => {

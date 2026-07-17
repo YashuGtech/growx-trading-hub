@@ -218,10 +218,23 @@
       // Without an active growx_session this will 401 — we surface that nicely.
       let creds = null;
       try {
+        // First: record the order + tx hash so it appears in the admin panel.
+        const plan = localStorage.getItem('fnx_plan') || 'Stellar 1';
+        const balance = localStorage.getItem('fnx_balance') || '10000';
+        const priceNum = Number((localStorage.getItem('fnx_price') || '159').replace(/[^0-9.]/g, '')) || 0;
+        const network = localStorage.getItem('fnx_network') || net || 'TRC20';
+        try {
+          await fetch('/api/orders', {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan, balance, price_usd: priceNum, network, tx_hash: hashVal }),
+          });
+        } catch (_) {}
+        // Then: instantly mint trade credentials and email them.
         const r = await fetch('/api/trade/issue', {
           method: 'POST', credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({})
+          body: JSON.stringify({ plan, balance, price_usd: priceNum, network, tx_hash: hashVal }),
         });
         creds = await r.json().catch(() => ({}));
         if (!r.ok || !creds.ok) creds = null;
