@@ -324,6 +324,7 @@ function openSymbol(sym){
   $('chart-sym-name').textContent = s.name;
   $('chart-sym-sub').textContent = s.sub;
   showScreen('chart');
+  try { openRealMarketWS(sym); } catch(_){}
 }
 function ensureChart(){
   if (state.chart) return;
