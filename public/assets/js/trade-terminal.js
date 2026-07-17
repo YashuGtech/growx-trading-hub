@@ -169,35 +169,44 @@ function tfSec(tf){
 
 function connectWS(){
   const cfg = state.wsConfig;
-  if (!cfg || !cfg.ws_url) { startSyntheticFeed(); return; }
+  // Always keep the synthetic feed running so all market rows stay live. The
+  // RealMarket WS below layers real ticks in for the currently viewed chart
+  // symbol (their API is one WS per symbol/timeframe).
+  startSyntheticFeed();
+  if (!cfg || !cfg.ws_base || !cfg.api_key) return;
+  // openRealMarketWS is invoked from openSymbol() when a chart opens.
+}
+
+function tfToRM(tf){
+  return ({'1m':'M1','5m':'M5','15m':'M15','1h':'H1','4h':'H4','1d':'D1'})[tf] || 'M1';
+}
+function openRealMarketWS(symbol){
+  const cfg = state.wsConfig;
+  if (!cfg || !cfg.ws_base || !cfg.api_key) return;
+  try { if (state.ws) state.ws.close(); } catch(_){}
+  const url = `${cfg.ws_base}?apiKey=${encodeURIComponent(cfg.api_key)}`
+    + `&symbolCode=${encodeURIComponent(symbol)}`
+    + `&timeFrame=${encodeURIComponent(tfToRM(state.timeframe))}`;
   try {
-    const ws = new WebSocket(cfg.ws_url);
+    const ws = new WebSocket(url);
     state.ws = ws;
-    let subscribed = false;
-    ws.addEventListener('open', ()=>{
-      subscribed = true;
-      // Subscribe to every symbol; providers vary — we send both common shapes
-      const symbols = ALL_SYMBOLS.map(x=>x.s);
-      try { ws.send(JSON.stringify({action:'subscribe', symbols})); } catch(_){}
-      try { ws.send(JSON.stringify({type:'subscribe', symbols})); } catch(_){}
-    });
+    state.wsSymbol = symbol;
     ws.addEventListener('message', (ev)=>{
       try {
-        const msg = JSON.parse(ev.data);
-        handleWsMessage(msg);
-      } catch(_) {}
+        const frame = JSON.parse(ev.data);
+        // Docs: frame.SymbolCode, frame.ClosePrice, frame.Bid
+        const sym = (frame.SymbolCode || frame.symbol || '').toUpperCase().replace('/','');
+        const price = Number(frame.Bid ?? frame.ClosePrice ?? frame.close ?? 0);
+        if (sym && SYM_INDEX[sym] && price) applyTick(sym, price);
+      } catch(_){}
     });
     ws.addEventListener('close', ()=>{
-      setTimeout(()=>{ if (!state.ws || state.ws.readyState===3) connectWS(); }, 4000);
+      if (state.wsSymbol === symbol) setTimeout(()=>openRealMarketWS(symbol), 4000);
     });
-    ws.addEventListener('error', ()=>{ /* fall back below */ });
-    // Fallback synthetic feed layered in so UI keeps moving even during WS gaps
-    startSyntheticFeed();
-    setTimeout(()=>{ if (!subscribed) startSyntheticFeed(); }, 3000);
-  } catch (e) {
-    startSyntheticFeed();
-  }
+    ws.addEventListener('error', ()=>{ /* silent, synthetic feed keeps UI live */ });
+  } catch(_){}
 }
+window.openRealMarketWS = openRealMarketWS;
 function handleWsMessage(msg){
   const list = Array.isArray(msg) ? msg : (msg.data && Array.isArray(msg.data) ? msg.data : [msg]);
   for (const m of list){
