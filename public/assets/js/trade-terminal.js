@@ -93,7 +93,6 @@ function showScreen(name){
   if (name==='wallet') renderWallet();
   if (name==='profile') renderProfile();
   if (name==='analytics') renderAnalytics();
-  if (name==='calendar') renderCalendar();
   window.scrollTo(0,0);
 }
 window.showScreen = showScreen;
