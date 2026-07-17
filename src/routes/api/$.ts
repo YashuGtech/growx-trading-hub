@@ -426,14 +426,12 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
 
   // ---------------- CHART CONFIG ----------------
   if (path === "/chart/config" && method === "GET") {
-    // Frontend receives a signed short-lived WS URL. We don't expose the raw
-    // key to the browser; instead we hand back the base URL + apikey query
-    // param so the widget can open a WebSocket directly.
     const key = process.env.REALMARKET_API_KEY || "";
     return json({
       ok: true,
-      ws_url: `wss://api.realmarketapi.com/ws?apikey=${encodeURIComponent(key)}`,
-      rest_url: "https://api.realmarketapi.com",
+      // Per-symbol WS: wss://api.realmarketapi.com/price?apiKey=KEY&symbolCode=XAUUSD&timeFrame=M1
+      ws_base: `wss://api.realmarketapi.com/price`,
+      api_key: key,
       has_key: !!key,
     });
   }
