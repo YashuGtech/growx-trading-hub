@@ -3,12 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Funded Accounts — Growx</title>
+  <title>Challenge Accounts — GrowX</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/animations.css" />
+  <style>
+    .plan-tabs{display:inline-flex;padding:6px;background:rgba(255,255,255,.04);border:1px solid var(--border-subtle);border-radius:14px;gap:6px;margin:0 auto 30px;}
+    .plan-tab{padding:10px 22px;border-radius:10px;font-weight:600;font-size:.95rem;color:var(--text-secondary);cursor:pointer;border:none;background:transparent;transition:all .2s;}
+    .plan-tab.active{background:linear-gradient(135deg,#f5c542,#d4a017);color:#1a0d00;box-shadow:0 4px 14px rgba(212,160,23,.3);}
+    .plan-pane{display:none;}
+    .plan-pane.active{display:block;}
+    .size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+    .size-card{background:rgba(255,255,255,.03);border:1px solid var(--border-subtle);border-radius:16px;padding:22px 20px;transition:all .2s;position:relative;overflow:hidden;}
+    .size-card:hover{border-color:var(--accent-gold);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+    .size-card.featured{border-color:rgba(245,197,66,.5);background:linear-gradient(180deg,rgba(245,197,66,.08),rgba(255,255,255,.02));}
+    .size-badge{position:absolute;top:14px;right:14px;font-size:.7rem;padding:4px 10px;background:rgba(245,197,66,.15);color:#f5c542;border-radius:20px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+    .size-cap{font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:800;color:#fff;margin:2px 0 4px;}
+    .size-sub{color:var(--text-muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;}
+    .size-price{margin:14px 0 16px;display:flex;align-items:baseline;gap:6px;}
+    .size-price .p{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#f5c542;}
+    .size-price .l{color:var(--text-muted);font-size:.85rem;}
+    .rule-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:14px;padding:16px 18px;margin-bottom:26px;}
+    .rule-cell{display:flex;flex-direction:column;gap:4px;}
+    .rule-cell .lbl{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+    .rule-cell .val{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:.98rem;}
+    @media (max-width:640px){
+      .size-cap{font-size:1.55rem;}
+      .size-price .p{font-size:1.35rem;}
+    }
+  </style>
 </head>
 <body>
 
@@ -42,241 +67,63 @@
   </div>
 </nav>
 
-<!-- Header -->
-<section style="padding:160px 0 60px;">
+<section style="padding:160px 0 40px;">
   <div class="container text-center">
     <div class="reveal">
       <div class="hero-badge">
         <span class="hero-badge-dot"></span>
-        7 Funded Tiers · USDT Accepted
+        1-Step &amp; 2-Step Challenges · USDT Accepted
       </div>
-      <h1 class="h-display">Choose your <span class="text-grad-premium">funded account</span></h1>
-      <p class="lead" style="margin: 20px auto 0;">
-        Pick the capital that matches your edge. Every account is one-time, gives you full trading access, and includes the same premium perks.
-      </p>
+      <h1 class="h-display">Choose your <span class="text-grad-premium">challenge</span></h1>
+      <p class="lead" style="margin: 20px auto 0;">Pass the target, get funded, keep 80% of profits. Static drawdown, swap-free, news &amp; weekend trading allowed.</p>
     </div>
   </div>
 </section>
 
-<!-- Account Tiers -->
 <section class="section-sm" id="tiers">
   <div class="container">
-    <div class="accounts-grid">
 
-      <div class="account-card reveal" data-plan="Lite" data-balance="5,000" data-price="89">
-        <div class="account-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l7-14 7 14"/><path d="M9 13h6"/></svg>
-        </div>
-        <div class="account-name">Lite</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Starter Tier</div>
-        <div class="account-balance">$5,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$89</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $5,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 80% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1-step challenge</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 5% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 10% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> MetaTrader 5 access</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Lite" data-balance="5,000" data-price="89" class="btn btn-gold btn-block">
-            Get Lite →
-          </button>
-        </div>
+    <div class="text-center">
+      <div class="plan-tabs reveal" role="tablist">
+        <button class="plan-tab active" data-tab="two">2-Step Challenge</button>
+        <button class="plan-tab" data-tab="one">1-Step Challenge</button>
       </div>
-
-      <div class="account-card reveal delay-1" data-plan="Stellar 1" data-balance="10,000" data-price="159">
-        <div class="account-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5"/></svg>
-        </div>
-        <div class="account-name">Stellar 1</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Entry Tier</div>
-        <div class="account-balance">$10,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$159</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $10,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 85% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1-step challenge</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 4% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 8% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Crypto & Forex pairs</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Stellar 1" data-balance="10,000" data-price="159" class="btn btn-gold btn-block">
-            Get Stellar 1 →
-          </button>
-        </div>
-      </div>
-
-      <div class="account-card featured reveal delay-2" data-plan="Stellar 2" data-balance="25,000" data-price="289">
-        <div class="account-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a0d00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M12 22V12M3.27 6.96L12 12l8.73-5.04"/></svg>
-        </div>
-        <div class="account-name">Stellar 2</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Popular Tier</div>
-        <div class="account-balance">$25,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$289</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $25,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 88% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1-step challenge</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 4% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 8% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> All asset classes</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Weekly payouts</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Stellar 2" data-balance="25,000" data-price="289" class="btn btn-gold btn-block">
-            Get Stellar 2 →
-          </button>
-        </div>
-      </div>
-
-      <div class="account-card reveal delay-3" data-plan="Orion Prime" data-balance="50,000" data-price="469">
-        <div class="account-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9" stroke-dasharray="3 4"/><circle cx="12" cy="12" r="11" stroke-dasharray="1 3"/></svg>
-        </div>
-        <div class="account-name">Orion Prime</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Pro Tier</div>
-        <div class="account-balance">$50,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$469</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $50,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 90% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1-step challenge</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 3% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 6% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> News trading allowed</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Weekend holding</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Orion Prime" data-balance="50,000" data-price="469" class="btn btn-gold btn-block">
-            Get Orion Prime →
-          </button>
-        </div>
-      </div>
-
-      <div class="account-card reveal delay-3" data-plan="Nebula Pro" data-balance="100,000" data-price="849">
-        <div class="account-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2" fill="#fff"/><path d="M5 19h14"/><path d="M6.34 15.34a8 8 0 0 1 11.32 0"/></svg>
-        </div>
-        <div class="account-name">Nebula Pro</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Elite Tier</div>
-        <div class="account-balance">$100,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$849</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $100,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 90% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 1-step challenge</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 3% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 6% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> All pairs + indices</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Dedicated support</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Nebula Pro" data-balance="100,000" data-price="849" class="btn btn-gold btn-block">
-            Get Nebula Pro →
-          </button>
-        </div>
-      </div>
-
-      <div class="account-card reveal delay-4" data-plan="Apex" data-balance="200,000" data-price="1,499">
-        <div class="account-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M3 20h18M6 20L12 4l6 16M9 14h6"/></svg>
-        </div>
-        <div class="account-name">Apex</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Master Tier</div>
-        <div class="account-balance">$200,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$1,499</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $200,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 90% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Instant funding</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 2.5% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 5% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> VIP support 24/7</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Custom strategies OK</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Apex" data-balance="200,000" data-price="1,499" class="btn btn-gold btn-block">
-            Get Apex →
-          </button>
-        </div>
-      </div>
-
-      <div class="account-card featured reveal delay-4" data-plan="Quantum" data-balance="300,000" data-price="2,199" style="--glow-color: var(--accent-purple);">
-        <div class="account-icon" style="background:var(--grad-purple);">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-60 12 12)"/><circle cx="12" cy="12" r="2" fill="#fff"/></svg>
-        </div>
-        <div class="account-name">Quantum</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">Ultimate Tier</div>
-        <div class="account-balance">$300,000<span></span></div>
-        <div class="account-price">
-          <span class="price">$2,199</span>
-          <span class="label">/ one-time</span>
-        </div>
-        <ul class="account-features">
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> $300,000 funded capital</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 90% profit split</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Instant funding</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 2% max daily loss</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 4% max drawdown</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> All pairs + indices + metals</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Personal account manager</li>
-          <li><span class="check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Same-day payouts</li>
-        </ul>
-        <div class="account-cta">
-          <button data-select-plan="Quantum" data-balance="300,000" data-price="2,199" class="btn btn-purple btn-block">
-            Get Quantum →
-          </button>
-        </div>
-      </div>
-
     </div>
 
-    <!-- Compare table -->
-    <div class="glass-strong reveal mt-xl" style="padding:36px;border-radius:20px;overflow-x:auto;">
-      <h3 class="h-2" style="margin-bottom:24px;text-align:center;">Compare <span class="text-grad-gold">all tiers</span></h3>
-      <table style="width:100%;border-collapse:separate;border-spacing:0;min-width:780px;">
-        <thead>
-          <tr style="background:rgba(255,255,255,0.03);">
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Tier</th>
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Capital</th>
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Profit Split</th>
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Daily DD</th>
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Total DD</th>
-            <th style="text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Price</th>
-          </tr>
-        </thead>
-        <tbody style="font-size:0.92rem;">
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Lite</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$5,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">80%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">5%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">10%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$89</td></tr>
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Stellar 1</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$10,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">85%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">4%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">8%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$159</td></tr>
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Stellar 2</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$25,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">88%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">4%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">8%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$289</td></tr>
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Orion Prime</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$50,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">90%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">3%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">6%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$469</td></tr>
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Nebula Pro</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$100,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">90%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">3%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">6%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$849</td></tr>
-          <tr><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><strong>Apex</strong></td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">$200,000</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">90%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">2.5%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);">5%</td><td style="padding:14px 16px;border-bottom:1px solid var(--border-subtle);color:var(--accent-gold);font-weight:700;">$1,499</td></tr>
-          <tr><td style="padding:14px 16px;"><strong>Quantum</strong></td><td style="padding:14px 16px;">$300,000</td><td style="padding:14px 16px;">90%</td><td style="padding:14px 16px;">2%</td><td style="padding:14px 16px;">4%</td><td style="padding:14px 16px;color:var(--accent-gold);font-weight:700;">$2,199</td></tr>
-        </tbody>
-      </table>
+    <!-- ================== 2-STEP ================== -->
+    <div class="plan-pane active" data-pane="two">
+      <div class="rule-bar reveal">
+        <div class="rule-cell"><span class="lbl">Phase 1 Target</span><span class="val">8%</span></div>
+        <div class="rule-cell"><span class="lbl">Phase 2 Target</span><span class="val">5%</span></div>
+        <div class="rule-cell"><span class="lbl">Max Loss</span><span class="val">8%</span></div>
+        <div class="rule-cell"><span class="lbl">Daily Loss</span><span class="val">5%</span></div>
+        <div class="rule-cell"><span class="lbl">Min Days</span><span class="val">3</span></div>
+        <div class="rule-cell"><span class="lbl">Leverage</span><span class="val">1:100</span></div>
+        <div class="rule-cell"><span class="lbl">Profit Split</span><span class="val">80%</span></div>
+        <div class="rule-cell"><span class="lbl">Payouts</span><span class="val">Biweekly</span></div>
+        <div class="rule-cell"><span class="lbl">Fee Refund</span><span class="val">3rd payout</span></div>
+        <div class="rule-cell"><span class="lbl">News / Weekend</span><span class="val">Allowed</span></div>
+      </div>
+
+      <div class="size-grid reveal delay-1" id="grid-two"></div>
+    </div>
+
+    <!-- ================== 1-STEP ================== -->
+    <div class="plan-pane" data-pane="one">
+      <div class="rule-bar reveal">
+        <div class="rule-cell"><span class="lbl">Profit Target</span><span class="val">10%</span></div>
+        <div class="rule-cell"><span class="lbl">Max Loss</span><span class="val">6%</span></div>
+        <div class="rule-cell"><span class="lbl">Daily Loss</span><span class="val">3%</span></div>
+        <div class="rule-cell"><span class="lbl">Min Days</span><span class="val">3</span></div>
+        <div class="rule-cell"><span class="lbl">Leverage</span><span class="val">1:100</span></div>
+        <div class="rule-cell"><span class="lbl">Profit Split</span><span class="val">80%</span></div>
+        <div class="rule-cell"><span class="lbl">Payouts</span><span class="val">Weekly</span></div>
+        <div class="rule-cell"><span class="lbl">Fee Refund</span><span class="val">2nd payout</span></div>
+        <div class="rule-cell"><span class="lbl">News / Weekend</span><span class="val">Allowed</span></div>
+        <div class="rule-cell"><span class="lbl">Drawdown</span><span class="val">Static</span></div>
+      </div>
+
+      <div class="size-grid reveal delay-1" id="grid-one"></div>
     </div>
   </div>
 </section>
@@ -293,12 +140,12 @@
           </span>
           <span>Grow<span class="text-grad-gold">X</span></span>
         </a>
-        <p style="color:var(--text-secondary);font-size:0.92rem;margin-top:14px;max-width:320px;">Premium funded trading accounts for the next generation of traders.</p>
+        <p style="color:var(--text-secondary);font-size:.92rem;margin-top:14px;max-width:320px;">Premium funded trading accounts for the next generation of traders.</p>
       </div>
       <div>
         <div class="footer-title">Platform</div>
         <ul class="footer-list">
-          <li><a href="accounts.html">Funded Accounts</a></li>
+          <li><a href="accounts.html">Challenge Accounts</a></li>
           <li><a href="how-it-works.html">How It Works</a></li>
           <li><a href="faq.html">FAQ</a></li>
           <li><a href="dashboard.html">Trader Dashboard</a></li>
@@ -324,12 +171,66 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 Growx. All rights reserved.</span>
+      <span>© 2025 GrowX. All rights reserved.</span>
       <span>Built for traders, by traders.</span>
     </div>
   </div>
 </footer>
 
+<script>
+// Challenge plan catalog
+const TWO_STEP = [
+  {size:5000,   price:45,   featured:false},
+  {size:10000,  price:79,   featured:true},
+  {size:15000,  price:105,  featured:false},
+  {size:25000,  price:165,  featured:false},
+  {size:50000,  price:279,  featured:true},
+  {size:100000, price:509,  featured:false},
+  {size:200000, price:999,  featured:false},
+];
+const ONE_STEP = [
+  {size:5000,   price:59,   featured:false},
+  {size:10000,  price:99,   featured:true},
+  {size:15000,  price:149,  featured:false},
+  {size:25000,  price:199,  featured:false},
+  {size:50000,  price:329,  featured:true},
+  {size:100000, price:599,  featured:false},
+  {size:200000, price:1149, featured:false},
+];
+function fmt(n){return n.toLocaleString('en-US');}
+function renderGrid(id, list, kind){
+  const el = document.getElementById(id);
+  el.innerHTML = list.map(p => {
+    const planName = (kind==='two'?'2-Step ':'1-Step ')+'$'+fmt(p.size);
+    return `
+    <div class="size-card ${p.featured?'featured':''}">
+      ${p.featured?'<div class="size-badge">Popular</div>':''}
+      <div class="size-sub">${kind==='two'?'2-Step Challenge':'1-Step Challenge'}</div>
+      <div class="size-cap">$${fmt(p.size)}</div>
+      <div class="size-price"><span class="p">$${p.price}</span><span class="l">/ one-time</span></div>
+      <button class="btn btn-gold btn-block"
+        data-select-plan="${planName}"
+        data-balance="${fmt(p.size)}"
+        data-price="${p.price}"
+        data-challenge="${kind==='two'?'2-step':'1-step'}">
+        Start Challenge
+      </button>
+    </div>`;
+  }).join('');
+}
+renderGrid('grid-two', TWO_STEP, 'two');
+renderGrid('grid-one', ONE_STEP, 'one');
+
+// Tabs
+document.querySelectorAll('.plan-tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.plan-tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.plan-pane').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelector(`.plan-pane[data-pane="${t.dataset.tab}"]`).classList.add('active');
+  });
+});
+</script>
 <script src="assets/js/reporter.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/animations.js"></script>
