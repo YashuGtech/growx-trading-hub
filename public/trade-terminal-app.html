@@ -214,17 +214,17 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
   </div>
 
   <div class="quick-actions">
-    <div class="quick-action" onclick="showScreen('wallet')">
-      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div class="qa-label">Deposit</div>
-    </div>
-    <div class="quick-action" onclick="showScreen('wallet')">
-      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7 7 7-7"/></svg></div>
-      <div class="qa-label">Withdraw</div>
-    </div>
     <div class="quick-action" onclick="showScreen('markets')">
       <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div>
       <div class="qa-label">Trade</div>
+    </div>
+    <div class="quick-action" onclick="showScreen('orders')">
+      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h6"/></svg></div>
+      <div class="qa-label">Orders</div>
+    </div>
+    <div class="quick-action" onclick="showScreen('analytics')">
+      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg></div>
+      <div class="qa-label">Analytics</div>
     </div>
   </div>
 
@@ -232,10 +232,15 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
   <div class="market-list" id="home-markets"></div>
 
   <div class="section-header"><h2>Quick Access</h2></div>
-  <div class="grid-3">
-    <div class="quick-action" onclick="showScreen('watchlist')"><div class="qa-icon">★</div><div class="qa-label">Watchlist</div></div>
-    <div class="quick-action" onclick="showScreen('analytics')"><div class="qa-icon">📊</div><div class="qa-label">Analytics</div></div>
-    <div class="quick-action" onclick="showScreen('calendar')"><div class="qa-icon">📅</div><div class="qa-label">Calendar</div></div>
+  <div class="grid-2">
+    <div class="quick-action" onclick="showScreen('watchlist')">
+      <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+      <div class="qa-label">Watchlist</div>
+    </div>
+    <div class="quick-action" onclick="showScreen('profile')">
+      <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></div>
+      <div class="qa-label">Profile</div>
+    </div>
   </div>
 </section>
 
@@ -407,10 +412,9 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
     <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Profit &amp; Loss</div><div class="mono up" style="font-size:18px;font-weight:700;margin-top:4px" id="wallet-pnl">+$0.00</div></div>
   </div>
   <div class="wallet-actions">
-    <button onclick="showToast('Contact support to deposit')">Deposit</button>
-    <button onclick="showToast('Contact support to withdraw')">Withdraw</button>
-    <button onclick="showToast('Transfer coming soon')">Transfer</button>
-    <button onclick="showToast('Convert coming soon')">Convert</button>
+    <button onclick="showScreen('markets')">Trade</button>
+    <button onclick="showScreen('orders')">Orders</button>
+    <button onclick="showScreen('analytics')">Analytics</button>
   </div>
   <div class="section-header"><h2>Recent Transactions</h2><a>View All →</a></div>
   <div class="card" id="wallet-txn-list"></div>
@@ -460,16 +464,6 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
     <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Profit Factor</div><div class="mono" style="font-size:20px;font-weight:800;margin-top:4px" id="an-pf">-</div></div>
     <div class="card"><div style="font-size:11px;color:var(--dim);text-transform:uppercase">Max Drawdown</div><div class="mono down" style="font-size:20px;font-weight:800;margin-top:4px" id="an-dd">0.0%</div></div>
   </div>
-</section>
-
-<!-- ============ CALENDAR ============ -->
-<section id="screen-calendar" class="screen">
-  <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
-    <h1>Economic Calendar</h1><div style="width:36px"></div>
-  </div>
-  <div class="cal-tabs" id="cal-tabs"></div>
-  <div class="card" id="cal-list" style="padding:0"></div>
 </section>
 
 <!-- ============ SETTINGS ============ -->

@@ -374,6 +374,47 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          href: string | null
+          id: number
+          is_read: boolean
+          kind: string
+          title: string
+          user_id: number
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          href?: string | null
+          id?: number
+          is_read?: boolean
+          kind: string
+          title: string
+          user_id: number
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          href?: string | null
+          id?: number
+          is_read?: boolean
+          kind?: string
+          title?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           balance: string | null
@@ -412,6 +453,111 @@ export type Database = {
           user_id?: number
         }
         Relationships: []
+      }
+      payout_methods: {
+        Row: {
+          bank_account: string | null
+          bank_name: string | null
+          created_at: string
+          id: number
+          is_default: boolean
+          method: string
+          network: string | null
+          paypal_email: string | null
+          user_id: number
+          wallet_address: string | null
+        }
+        Insert: {
+          bank_account?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: number
+          is_default?: boolean
+          method: string
+          network?: string | null
+          paypal_email?: string | null
+          user_id: number
+          wallet_address?: string | null
+        }
+        Update: {
+          bank_account?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: number
+          is_default?: boolean
+          method?: string
+          network?: string | null
+          paypal_email?: string | null
+          user_id?: number
+          wallet_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_methods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payout_requests: {
+        Row: {
+          admin_note: string | null
+          amount_usd: number
+          id: number
+          payout_method_id: number | null
+          processed_at: string | null
+          requested_at: string
+          status: string
+          trade_account_id: number
+          user_id: number
+        }
+        Insert: {
+          admin_note?: string | null
+          amount_usd: number
+          id?: number
+          payout_method_id?: number | null
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          trade_account_id: number
+          user_id: number
+        }
+        Update: {
+          admin_note?: string | null
+          amount_usd?: number
+          id?: number
+          payout_method_id?: number | null
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          trade_account_id?: number
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_requests_payout_method_id_fkey"
+            columns: ["payout_method_id"]
+            isOneToOne: false
+            referencedRelation: "payout_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payout_requests_trade_account_id_fkey"
+            columns: ["trade_account_id"]
+            isOneToOne: false
+            referencedRelation: "trade_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payout_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       refunds: {
         Row: {
@@ -512,16 +658,28 @@ export type Database = {
       trade_accounts: {
         Row: {
           balance: number
+          challenge_type: string
           created_at: string
           credentials_emailed_at: string | null
+          daily_loss_pct: number | null
           equity: number
           id: number
           last_seen_at: string | null
           leverage: number
+          max_loss_pct: number | null
+          min_trading_days: number | null
           order_id: number | null
+          parent_account_id: number | null
           password_hash: string
           password_plain: string | null
+          payouts_taken: number | null
+          phase: string
+          phase_status: string
           plan: string
+          profit_split_pct: number | null
+          profit_target_pct: number | null
+          refund_eligible: boolean | null
+          reject_reason: string | null
           starting_balance: number
           status: string
           trade_id: string
@@ -530,16 +688,28 @@ export type Database = {
         }
         Insert: {
           balance?: number
+          challenge_type?: string
           created_at?: string
           credentials_emailed_at?: string | null
+          daily_loss_pct?: number | null
           equity?: number
           id?: number
           last_seen_at?: string | null
           leverage?: number
+          max_loss_pct?: number | null
+          min_trading_days?: number | null
           order_id?: number | null
+          parent_account_id?: number | null
           password_hash: string
           password_plain?: string | null
+          payouts_taken?: number | null
+          phase?: string
+          phase_status?: string
           plan: string
+          profit_split_pct?: number | null
+          profit_target_pct?: number | null
+          refund_eligible?: boolean | null
+          reject_reason?: string | null
           starting_balance?: number
           status?: string
           trade_id: string
@@ -548,23 +718,43 @@ export type Database = {
         }
         Update: {
           balance?: number
+          challenge_type?: string
           created_at?: string
           credentials_emailed_at?: string | null
+          daily_loss_pct?: number | null
           equity?: number
           id?: number
           last_seen_at?: string | null
           leverage?: number
+          max_loss_pct?: number | null
+          min_trading_days?: number | null
           order_id?: number | null
+          parent_account_id?: number | null
           password_hash?: string
           password_plain?: string | null
+          payouts_taken?: number | null
+          phase?: string
+          phase_status?: string
           plan?: string
+          profit_split_pct?: number | null
+          profit_target_pct?: number | null
+          refund_eligible?: boolean | null
+          reject_reason?: string | null
           starting_balance?: number
           status?: string
           trade_id?: string
           used_margin?: number
           user_id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trade_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "trade_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trade_positions: {
         Row: {
@@ -656,6 +846,7 @@ export type Database = {
           name: string | null
           password_hash: string
           phone: string | null
+          role: string
           status: string
         }
         Insert: {
@@ -669,6 +860,7 @@ export type Database = {
           name?: string | null
           password_hash: string
           phone?: string | null
+          role?: string
           status?: string
         }
         Update: {
@@ -682,6 +874,7 @@ export type Database = {
           name?: string | null
           password_hash?: string
           phone?: string | null
+          role?: string
           status?: string
         }
         Relationships: []

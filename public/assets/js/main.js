@@ -531,9 +531,11 @@
     const plan = btn.dataset.selectPlan;
     const balance = btn.dataset.balance;
     const price = btn.dataset.price;
+    const challenge = btn.dataset.challenge || '2-step';
     localStorage.setItem('fnx_plan', plan);
     localStorage.setItem('fnx_balance', balance);
     localStorage.setItem('fnx_price', price);
+    localStorage.setItem('fnx_challenge', challenge);
     window.location.href = `checkout.html?plan=${encodeURIComponent(plan)}&balance=${balance}&price=${price}`;
   });
 
