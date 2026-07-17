@@ -243,7 +243,7 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
   }
 
   // ---------------- TRADE ACCOUNT AUTH ----------------
-  if (path === "/trade/instant-issue" && method === "POST") {
+  if ((path === "/trade/instant-issue" || path === "/trade/issue") && method === "POST") {
     const user = await getUserFromRequest(request);
     if (!user) return json({ ok: false, error: "unauthorized" }, { status: 401 });
 
