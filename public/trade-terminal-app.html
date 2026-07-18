@@ -183,7 +183,45 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 .cal-item .time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
 .cal-item .title{font-weight:600;font-size:13px}
 .cal-item .impact{text-align:right;font-size:11px;font-weight:600}
-.impact-high{color:var(--down)} .impact-med{color:#f59e0b} .impact-low{color:var(--up)}
+.impact-high{color:var(--down)} .impact-med{color:#38bdf8} .impact-low{color:var(--up)}
+
+/* ---------- Premium desktop layout ---------- */
+@media (min-width: 1024px){
+  body{padding-bottom:0}
+  .app{max-width:none;display:grid;grid-template-columns:240px 1fr;grid-template-rows:auto 1fr;min-height:100vh;column-gap:0}
+  .desktop-sidebar{grid-row:1 / span 2;background:linear-gradient(180deg,#0a1424 0%,#050912 100%);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:6px}
+  .desktop-sidebar .brand{display:flex;align-items:center;gap:10px;padding:6px 10px 22px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .desktop-sidebar .brand img{width:38px;height:38px;border-radius:10px;object-fit:cover;box-shadow:0 4px 18px rgba(59,130,246,.35)}
+  .desktop-sidebar .brand .t{font-size:14px;font-weight:800;letter-spacing:1px}
+  .desktop-sidebar .brand .s{font-size:10px;color:var(--dim);letter-spacing:2px}
+  .desktop-sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:var(--dim);font-weight:600;font-size:13px;cursor:pointer;transition:.15s}
+  .desktop-sidebar .nav-item:hover{background:rgba(59,130,246,.08);color:var(--text)}
+  .desktop-sidebar .nav-item.active{background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(139,92,246,.14));color:#fff;box-shadow:inset 0 0 0 1px rgba(59,130,246,.35)}
+  .desktop-sidebar .nav-item svg{width:18px;height:18px;flex:0 0 18px}
+  .desktop-only{display:flex}
+  .bottom-nav{display:none}
+  .screen{padding:24px 32px 40px;max-width:1400px;margin:0 auto;width:100%}
+  .screen.active{display:block}
+  #chart-container{height:520px}
+  .chart-hero{padding:22px 24px 18px}
+  .chart-hero .sym-price{font-size:34px}
+  .grid-2{grid-template-columns:2fr 1fr;gap:18px}
+  .home-hero{padding:28px 30px}
+  .home-hero .name{font-size:28px}
+  .balance-box .value{font-size:26px}
+}
+.desktop-only{display:none}
+
+/* ---------- Eliminated / breached screen ---------- */
+.breach-wrap{max-width:520px;margin:60px auto 0;text-align:center;padding:32px 22px;background:linear-gradient(160deg,rgba(239,68,68,.12),rgba(11,17,29,.6));border:1px solid rgba(239,68,68,.35);border-radius:20px;box-shadow:0 20px 60px rgba(239,68,68,.15)}
+.breach-wrap .icon{width:64px;height:64px;border-radius:20px;background:rgba(239,68,68,.18);color:var(--down);display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.breach-wrap h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.breach-wrap p{color:var(--dim);font-size:14px;line-height:1.5;margin-bottom:22px}
+.breach-wrap .cta{display:inline-block;padding:14px 26px;border-radius:12px;background:var(--grad);color:#fff;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(59,130,246,.35)}
+.breach-wrap .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.breach-wrap .stats > div{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px}
+.breach-wrap .stats .l{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.breach-wrap .stats .v{font-family:'JetBrains Mono',monospace;font-weight:700;margin-top:4px;color:var(--down)}
 </style>
 </head>
 <body>
