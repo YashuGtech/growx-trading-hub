@@ -117,6 +117,11 @@ async function loadAccount(){
   }
   state.account = r.account;
   state.positions = r.positions || [];
+  state.risk = r.risk || null;
+  if (r.account && r.account.status === 'eliminated') {
+    showBreach(r.account, r.risk);
+    return;
+  }
   renderHome();
 }
 async function loadPositions(){
