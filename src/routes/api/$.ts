@@ -375,11 +375,13 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
     const acc = await getTradeAccountFromRequest(request);
     if (!acc) return json({ ok: false }, { status: 401 });
     const positions = await db.from("trade_positions").select("*").eq("trade_account_id", acc.id).order("open_time", { ascending: false });
-    return json({ ok: true, account: publicAccount(acc), positions: positions.data || [] });
+    const risk = await evaluateRisk(acc, positions.data || []);
+    return json({ ok: true, account: publicAccount(risk.account), positions: positions.data || [], risk: risk.summary });
   }
   if (path === "/trade/positions" && method === "POST") {
     const acc = await getTradeAccountFromRequest(request);
     if (!acc) return json({ ok: false }, { status: 401 });
+    if (acc.status === "eliminated") return json({ ok: false, error: "Account eliminated — risk limits breached. Purchase a new funded account to continue trading." }, { status: 403 });
     const b = await readJson(request);
     const lots = Math.max(0.01, Number(b.lots || 0.01));
     const price = Number(b.open_price || b.price || 0);
@@ -454,6 +456,62 @@ function publicAccount(a: any) {
     id: a.id, trade_id: a.trade_id, plan: a.plan, balance: Number(a.balance),
     equity: Number(a.equity), used_margin: Number(a.used_margin),
     starting_balance: Number(a.starting_balance), leverage: a.leverage, status: a.status,
+    eliminated_at: a.eliminated_at || null, elimination_reason: a.elimination_reason || null,
+    phase: a.phase || null, challenge_type: a.challenge_type || null,
+  };
+}
+
+// ---- Risk engine: enforce 5% daily loss and 8% overall loss caps ----
+async function evaluateRisk(acc: any, positions: any[]): Promise<{ account: any; summary: any }> {
+  const starting = Number(acc.starting_balance) || 0;
+  const equity = Number(acc.equity) || 0;
+  const overallLoss = Math.max(0, starting - equity);
+  const overallLossPct = starting ? (overallLoss / starting) * 100 : 0;
+
+  // Daily loss = negative sum of positions closed today + floating losses on open positions (approx: use 0 for floating, closed only for MVP)
+  const startOfDay = new Date(); startOfDay.setUTCHours(0, 0, 0, 0);
+  const closedToday = positions.filter(
+    (p) => p.status === "closed" && p.close_time && new Date(p.close_time) >= startOfDay,
+  );
+  const dailyRealized = closedToday.reduce((s, p) => s + Number(p.realized_pnl || 0), 0);
+  const dailyLoss = Math.max(0, -dailyRealized);
+  const dailyLossPct = starting ? (dailyLoss / starting) * 100 : 0;
+
+  const DAILY_CAP = 5;   // %
+  const OVERALL_CAP = 8; // %
+
+  let account = acc;
+  if (acc.status !== "eliminated" && (overallLossPct >= OVERALL_CAP || dailyLossPct >= DAILY_CAP)) {
+    const reason = overallLossPct >= OVERALL_CAP
+      ? `Overall drawdown ${overallLossPct.toFixed(2)}% exceeded 8% limit`
+      : `Daily loss ${dailyLossPct.toFixed(2)}% exceeded 5% limit`;
+    // Force-close open positions at their open price (no PnL applied — freeze state)
+    const openIds = positions.filter((p) => p.status === "open").map((p) => p.id);
+    if (openIds.length) {
+      await db.from("trade_positions").update({
+        status: "closed", close_time: new Date().toISOString(),
+      }).in("id", openIds);
+    }
+    const upd = await db.from("trade_accounts").update({
+      status: "eliminated",
+      eliminated_at: new Date().toISOString(),
+      elimination_reason: reason,
+      used_margin: 0,
+    } as any).eq("id", acc.id).select("*").single();
+    account = upd.data || { ...acc, status: "eliminated", eliminated_at: new Date().toISOString(), elimination_reason: reason };
+  }
+  return {
+    account,
+    summary: {
+      starting_balance: starting,
+      equity,
+      daily_loss: dailyLoss,
+      daily_loss_pct: Number(dailyLossPct.toFixed(2)),
+      overall_loss: overallLoss,
+      overall_loss_pct: Number(overallLossPct.toFixed(2)),
+      daily_cap_pct: DAILY_CAP,
+      overall_cap_pct: OVERALL_CAP,
+    },
   };
 }
 
