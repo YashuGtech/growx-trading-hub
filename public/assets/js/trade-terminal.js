@@ -78,6 +78,22 @@ function showToast(msg, type='success') {
 }
 window.showToast = showToast;
 
+function showBreach(account, risk){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-breached');
+  if (!el) { showToast('Account eliminated', 'error'); return; }
+  el.classList.add('active');
+  const reason = document.getElementById('breach-reason');
+  if (reason) reason.textContent = account.elimination_reason || 'Risk limits breached. All positions closed.';
+  const d = document.getElementById('breach-daily');
+  const o = document.getElementById('breach-overall');
+  if (d) d.textContent = (risk?.daily_loss_pct ?? 0).toFixed(2) + '% ($' + (risk?.daily_loss ?? 0).toFixed(2) + ')';
+  if (o) o.textContent = (risk?.overall_loss_pct ?? 0).toFixed(2) + '% ($' + (risk?.overall_loss ?? 0).toFixed(2) + ')';
+  const nav = document.querySelector('.bottom-nav'); if (nav) nav.style.display = 'none';
+  const side = document.querySelector('.desktop-sidebar'); if (side) side.style.opacity = '0.4';
+}
+window.showBreach = showBreach;
+
 function showScreen(name){
   state.screen = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
