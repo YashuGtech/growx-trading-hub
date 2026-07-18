@@ -576,13 +576,18 @@
      (avoids a 1-frame flash of the wrong network's QR before our own inline flow handles it). */
   if (qrWrap && !document.getElementById('payment-wallet-section')) {
     const net = (params.get('net') || 'TRC20').toLowerCase();
+    const EVM = '0xb3f27d0433191E2FD554448AF53Db61Eb043cdB4';
     const addrs = {
-      trc20: 'TX9a1Fnpk7Z8bX6n2GdQ7Cz3Yb5pNkRdLr',
-      erc20: '0x4E73B4bD2fD7c9bA3F8AB6c3e21Df8a9B5c2D1eF',
-      bep20: '0xa5b7C9d3F8e1B6a4C7c9F3a5b7d9e1f3a5b7c9D3',
-      polygon: '0x9F8a7b6C5d4E3f2a1B0c9D8e7F6a5b4C3d2E1f0A',
-      arbitrum: '0xC1d2E3f4A5b6C7d8E9f0A1b2C3d4E5f6A7b8C9d0',
-      solana: '7xKXtg2CW87d97TX4SDArk4XKcZ8T9Y6Fv1oP2rN3mQ'
+      trc20: 'TCazUzQb4CqpBtrLsNtbVc44wYfxkw2XW2',
+      erc20: EVM,
+      bep20: EVM,
+      polygon: EVM,
+      arbitrum: EVM,
+      avalanche: EVM,
+      base: EVM,
+      optimism: EVM,
+      solana: 'DChYg7oNrutxaTR4hBz157YREXsuvKaPDw5jo4guUW19',
+      ton: 'UQAqU4k5MV87GuXES4YgmfQRG8ychAckqTNEGblFIwJfQ_w8'
     };
     const addr = addrs[net] || addrs.trc20;
     qrWrap.innerHTML = `
