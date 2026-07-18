@@ -375,11 +375,13 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
     const acc = await getTradeAccountFromRequest(request);
     if (!acc) return json({ ok: false }, { status: 401 });
     const positions = await db.from("trade_positions").select("*").eq("trade_account_id", acc.id).order("open_time", { ascending: false });
-    return json({ ok: true, account: publicAccount(acc), positions: positions.data || [] });
+    const risk = await evaluateRisk(acc, positions.data || []);
+    return json({ ok: true, account: publicAccount(risk.account), positions: positions.data || [], risk: risk.summary });
   }
   if (path === "/trade/positions" && method === "POST") {
     const acc = await getTradeAccountFromRequest(request);
     if (!acc) return json({ ok: false }, { status: 401 });
+    if (acc.status === "eliminated") return json({ ok: false, error: "Account eliminated — risk limits breached. Purchase a new funded account to continue trading." }, { status: 403 });
     const b = await readJson(request);
     const lots = Math.max(0.01, Number(b.lots || 0.01));
     const price = Number(b.open_price || b.price || 0);
