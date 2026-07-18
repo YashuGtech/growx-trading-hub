@@ -662,6 +662,8 @@ export type Database = {
           created_at: string
           credentials_emailed_at: string | null
           daily_loss_pct: number | null
+          eliminated_at: string | null
+          elimination_reason: string | null
           equity: number
           id: number
           last_seen_at: string | null
@@ -692,6 +694,8 @@ export type Database = {
           created_at?: string
           credentials_emailed_at?: string | null
           daily_loss_pct?: number | null
+          eliminated_at?: string | null
+          elimination_reason?: string | null
           equity?: number
           id?: number
           last_seen_at?: string | null
@@ -722,6 +726,8 @@ export type Database = {
           created_at?: string
           credentials_emailed_at?: string | null
           daily_loss_pct?: number | null
+          eliminated_at?: string | null
+          elimination_reason?: string | null
           equity?: number
           id?: number
           last_seen_at?: string | null
