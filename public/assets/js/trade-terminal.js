@@ -51,6 +51,7 @@ const state = {
   rafPending: false,
   chart: null,
   candleSeries: null,
+  chartResizeObserver: null,
   wsConfig: null,
   ws: null,
   wsSubs: new Set(),
@@ -266,9 +267,7 @@ function applyTick(sym, price){
     last.close = price;
     last.high = Math.max(last.high, price);
     last.low  = Math.min(last.low, price);
-    if (sym === state.activeSymbol && state.candleSeries){
-      state.candleSeries.update(last);
-    }
+    if (sym === state.activeSymbol) drawChart();
   }
   // Live UI updates are throttled into one animation frame. This keeps the
   // desktop terminal smooth while the synthetic feed updates every symbol.
