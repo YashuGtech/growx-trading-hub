@@ -69,6 +69,7 @@ const priceFmt = (sym, n) => {
   if (['XAUUSD','XAGUSD','USOIL','US30','SPX500','NAS100','BTCUSD','ETHUSD','SOLUSD'].includes(sym)) return n.toFixed(2);
   return n.toFixed(5);
 };
+const compactVol = (n) => Intl.NumberFormat(undefined, { notation:'compact', maximumFractionDigits:1 }).format(Number(n||0));
 
 function showToast(msg, type='success') {
   const t = document.createElement('div');
@@ -103,7 +104,7 @@ function showScreen(name){
   document.querySelectorAll('.bottom-nav .tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   // Lazy load per screen
   if (name==='markets') renderMarkets();
-  if (name==='chart') { ensureChart(); redrawChart(); syncQuickTicket(); }
+  if (name==='chart') { ensureChart(); redrawChart(); syncQuickTicket(); requestAnimationFrame(()=> state.chart?.timeScale().fitContent()); }
   if (name==='place') syncPlaceOrder();
   if (name==='positions') loadPositions();
   if (name==='watchlist') renderWatchlist();
@@ -329,6 +330,8 @@ function renderRiskObjectives(profitPct){
   const p2 = Math.max(0, Math.min(100, profitPct / 5 * 100));
   setText('daily-used', `Used: ${daily.toFixed(2)}%`); setText('daily-rem', `Remaining: ${Math.max(0,5-daily).toFixed(2)}%`);
   setText('overall-used', `Used: ${overall.toFixed(2)}%`); setText('overall-rem', `Remaining: ${Math.max(0,8-overall).toFixed(2)}%`);
+  setText('daily-status', daily >= 5 ? 'Breached' : daily >= 4 ? 'Warning' : 'Normal');
+  setText('overall-status', overall >= 8 ? 'Breached' : overall >= 6.4 ? 'Warning' : 'Normal');
   const db=$('daily-bar'); if(db) db.style.width = Math.min(100, daily/5*100).toFixed(1)+'%';
   const ob=$('overall-bar'); if(ob) ob.style.width = Math.min(100, overall/8*100).toFixed(1)+'%';
   const p1b=$('phase1-bar'); if(p1b) p1b.style.width = p1.toFixed(1)+'%';
@@ -457,7 +460,7 @@ function updateChartHUD(){
   $('cs-high').textContent = priceFmt(state.activeSymbol, t.high);
   $('cs-low').textContent = priceFmt(state.activeSymbol, t.low);
   setText('cs-open', priceFmt(state.activeSymbol, t.open));
-  setText('cs-close', priceFmt(state.activeSymbol, Math.abs(t.price * 11.37)));
+  setText('cs-close', compactVol(Math.abs(t.price * 11370)));
   updateQuickTicket();
 }
 function toggleFav(){
@@ -637,7 +640,7 @@ function renderWatchlist(){
   wrap.innerHTML = marketHeadHtml() + list.map(marketRowHtml).join('');
   wrap.querySelectorAll('.market-row').forEach((r,i)=> r.addEventListener('click', ()=> openSymbol(list[i].s)));
 }
-function editWatchlist(){ showScreen('markets'); showToast('Tap ★ on any chart to add'); }
+function editWatchlist(){ showScreen('markets'); showToast('Open a chart and use the favorite button to add symbols'); }
 window.editWatchlist = editWatchlist;
 
 function renderWallet(){
@@ -656,7 +659,7 @@ function renderWallet(){
 function txRowHtml(p){
   const pnl = Number(p.realized_pnl||0);
   return `<div class="tx-row">
-    <div class="hstack"><div class="tx-icon pnl">↕</div>
+    <div class="hstack"><div class="tx-icon pnl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
       <div><div style="font-weight:600;font-size:13px">${SYM_INDEX[p.pair]?.name || p.pair}</div>
         <div style="font-size:11px;color:var(--dim)">${p.side.toUpperCase()} · ${p.lots} lots</div></div></div>
     <div class="mono ${pnl>=0?'up':'down'}" style="font-weight:700">${pnl>=0?'+':''}${money(pnl)}</div>
