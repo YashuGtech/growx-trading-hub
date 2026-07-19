@@ -231,7 +231,7 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
       <button data-tf="4h">H4</button>
       <button data-tf="1d">D1</button>
     </div>
-    <div id="chart-container"></div>
+    <div id="chart-container"><canvas id="chart-canvas"></canvas><div class="chart-watermark">GROWX</div></div>
     <div class="trade-cta">
       <div class="field"><div class="lbl">Order Type</div><div class="val"><select id="ct-order-type"><option value="market">Market Order</option><option value="limit">Limit Order</option><option value="stop">Stop Order</option></select></div></div>
       <div class="field"><div class="lbl">Volume (Lots)</div><div class="val"><div class="stepper"><button onclick="stepQuickLots(-0.1)">−</button></div><input id="ct-lots" type="number" min="0.01" step="0.01" value="1.00" style="text-align:center" /><div class="stepper"><button onclick="stepQuickLots(0.1)">+</button></div></div></div>
