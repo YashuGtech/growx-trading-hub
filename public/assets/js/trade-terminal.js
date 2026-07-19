@@ -48,6 +48,7 @@ const state = {
   history: {},         // symbol -> [{time, open, high, low, close}]
   activeSymbol: 'EURUSD',
   timeframe: '15m',
+  rafPending: false,
   chart: null,
   candleSeries: null,
   wsConfig: null,
@@ -102,13 +103,14 @@ function showScreen(name){
   document.querySelectorAll('.bottom-nav .tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   // Lazy load per screen
   if (name==='markets') renderMarkets();
-  if (name==='chart') { ensureChart(); redrawChart(); }
+  if (name==='chart') { ensureChart(); redrawChart(); syncQuickTicket(); }
   if (name==='place') syncPlaceOrder();
   if (name==='positions') loadPositions();
   if (name==='watchlist') renderWatchlist();
   if (name==='wallet') renderWallet();
   if (name==='profile') renderProfile();
   if (name==='analytics') renderAnalytics();
+  document.querySelectorAll('.desktop-sidebar .nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   window.scrollTo(0,0);
 }
 window.showScreen = showScreen;
@@ -142,7 +144,7 @@ async function loadAccount(){
 }
 async function loadPositions(){
   const r = await api('/trade/account');
-  if (r.ok) { state.positions = r.positions || []; state.account = r.account; }
+  if (r.ok) { state.positions = r.positions || []; state.account = r.account; state.risk = r.risk || state.risk; if (r.account?.status === 'eliminated') return showBreach(r.account, r.risk); }
   renderPositions();
   renderHome();
 }
@@ -267,37 +269,89 @@ function applyTick(sym, price){
       state.candleSeries.update(last);
     }
   }
-  // Live UI updates
-  if (state.screen==='chart' && sym===state.activeSymbol) updateChartHUD();
-  if (state.screen==='home') updateHomeMarkets();
-  if (state.screen==='markets') updateMarketsPrices();
-  if (state.screen==='watchlist') renderWatchlist();
-  if (state.screen==='positions') updatePositionPnLs();
-  if (state.screen==='place' && sym===state.activeSymbol) updatePlacePrice();
+  // Live UI updates are throttled into one animation frame. This keeps the
+  // desktop terminal smooth while the synthetic feed updates every symbol.
+  scheduleLiveUiUpdate(sym);
+}
+function scheduleLiveUiUpdate(sym){
+  state.lastTickSymbol = sym;
+  if (state.rafPending) return;
+  state.rafPending = true;
+  requestAnimationFrame(()=>{
+    state.rafPending = false;
+    if (state.screen==='chart') { updateChartHUD(); updateQuickTicket(); }
+    if (state.screen==='home') updateHomeMarketsPrices();
+    if (state.screen==='markets') updateMarketsPrices();
+    if (state.screen==='watchlist') updateWatchlistPrices();
+    if (state.screen==='positions') updatePositionPnLs();
+    if (state.screen==='place') updatePlacePrice();
+  });
 }
 
 // ---------- HOME ----------
 function renderHome(){
   if (!state.account) return;
   const a = state.account;
-  $('home-name').textContent = a.trade_id;
-  $('home-plan').textContent = a.plan;
-  $('home-trade-id').textContent = a.trade_id;
-  const pnl = a.equity - a.starting_balance;
+  const pnl = Number(a.equity || 0) - Number(a.starting_balance || 0);
   const pct = a.starting_balance ? (pnl/a.starting_balance*100) : 0;
-  $('home-balance').textContent = money(a.balance);
-  $('home-equity').textContent = money(a.equity);
-  $('home-pnl').textContent = (pnl>=0?'+':'')+money(pnl);
-  $('home-pnl').className = 'mono ' + (pnl>=0?'up':'down');
-  $('home-pnl-pct').textContent = (pct>=0?'+':'')+pct.toFixed(2)+'%';
+  const free = Number(a.balance || 0) - Number(a.used_margin || 0);
+  const marginLevel = Number(a.used_margin || 0) > 0 ? (Number(a.equity || 0)/Number(a.used_margin || 0)*100).toFixed(2)+'%' : '—';
+  setText('home-name', a.trade_id || 'Trader');
+  setText('home-plan', a.plan || 'GrowX Challenge');
+  setText('home-trade-id', a.trade_id || 'GX-------');
+  setText('home-balance', money(a.balance));
+  setText('home-equity', money(a.equity));
+  setText('home-equity-sub', 'Equity ' + money(a.equity));
+  setText('home-free-margin', money(free));
+  setText('home-margin-level', marginLevel);
+  setText('home-status', (a.status || 'active').replace(/_/g,' '));
+  setText('home-leverage', '1:'+(a.leverage || 100));
+  setText('home-open-count', state.positions.filter(p=>p.status==='open').length);
+  setText('home-used-margin', money(a.used_margin || 0));
+  setText('home-pnl', (pnl>=0?'+':'')+money(pnl));
+  setClass('home-pnl', 'value ' + (pnl>=0?'up':'down'));
+  setText('home-pnl-pct', (pct>=0?'+':'')+pct.toFixed(2)+'%');
+  setClass('home-pnl-pct', 'chip ' + (pct>=0?'up':'down'));
+  setText('home-today-pnl', (pnl>=0?'+':'')+money(pnl));
+  setClass('home-today-pnl', 'value ' + (pnl>=0?'up':'down'));
+  setText('home-today-pct', (pct>=0?'+':'')+pct.toFixed(2)+'%');
+  renderRiskObjectives(pct);
   updateHomeMarkets();
+  renderHomeWatchlist();
+}
+function setText(id, value){ const el=$(id); if (el) el.textContent = value; }
+function setClass(id, value){ const el=$(id); if (el) el.className = value; }
+function renderRiskObjectives(profitPct){
+  const risk = state.risk || {};
+  const daily = Number(risk.daily_loss_pct || 0);
+  const overall = Number(risk.overall_loss_pct || 0);
+  const p1 = Math.max(0, Math.min(100, profitPct / 8 * 100));
+  const p2 = Math.max(0, Math.min(100, profitPct / 5 * 100));
+  setText('daily-used', `Used: ${daily.toFixed(2)}%`); setText('daily-rem', `Remaining: ${Math.max(0,5-daily).toFixed(2)}%`);
+  setText('overall-used', `Used: ${overall.toFixed(2)}%`); setText('overall-rem', `Remaining: ${Math.max(0,8-overall).toFixed(2)}%`);
+  const db=$('daily-bar'); if(db) db.style.width = Math.min(100, daily/5*100).toFixed(1)+'%';
+  const ob=$('overall-bar'); if(ob) ob.style.width = Math.min(100, overall/8*100).toFixed(1)+'%';
+  const p1b=$('phase1-bar'); if(p1b) p1b.style.width = p1.toFixed(1)+'%';
+  const p2b=$('phase2-bar'); if(p2b) p2b.style.width = p2.toFixed(1)+'%';
+  setText('phase1-progress', `Progress: ${Math.max(0, profitPct).toFixed(2)}%`);
+  setText('phase2-progress', `Progress: ${Math.max(0, profitPct).toFixed(2)}%`);
+  setText('phase1-status', profitPct >= 8 ? 'Achieved' : 'In Progress');
+  setText('phase2-status', (state.account?.phase === 'phase_2' || state.account?.phase === 'live') ? (profitPct >= 5 ? 'Achieved' : 'In Progress') : 'Locked');
 }
 function updateHomeMarkets(){
   const wrap = $('home-markets');
   if (!wrap) return;
-  const list = SYMBOLS.forex.slice(0,6);
-  wrap.innerHTML = list.map(s => marketRowHtml(s)).join('');
+  const list = ['EURUSD','GBPUSD','USDJPY','XAUUSD','BTCUSD','ETHUSD'].map(x=>SYM_INDEX[x]).filter(Boolean);
+  wrap.innerHTML = marketHeadHtml() + list.map(s => marketRowHtml(s)).join('');
   wrap.querySelectorAll('.market-row').forEach((r,i)=> r.addEventListener('click', ()=> openSymbol(list[i].s)));
+}
+function renderHomeWatchlist(){
+  const wrap = $('home-watchlist'); if (!wrap) return;
+  const list = ALL_SYMBOLS.filter(s => state.favorites.has(s.s)).slice(0,5);
+  wrap.innerHTML = marketHeadHtml() + list.map(marketRowHtml).join('');
+  wrap.querySelectorAll('.market-row').forEach((r,i)=> r.addEventListener('click', ()=> openSymbol(list[i].s)));
+}
+function updateHomeMarketsPrices(){ updateMarketRows($('home-markets')); updateMarketRows($('home-watchlist'));
 }
 
 // ---------- MARKETS ----------
@@ -309,31 +363,44 @@ function renderMarkets(){
   const q = ($('markets-search')?.value || '').toUpperCase();
   const list = (SYMBOLS[state.marketCat]||[]).filter(s=> !q || s.s.includes(q) || s.name.includes(q));
   const wrap = $('markets-list');
-  wrap.innerHTML = list.map(s => marketRowHtml(s)).join('');
+  wrap.innerHTML = marketHeadHtml() + list.map(s => marketRowHtml(s)).join('');
   wrap.querySelectorAll('.market-row').forEach((r,i)=> r.addEventListener('click', ()=> openSymbol(list[i].s)));
   $('markets-search').oninput = renderMarkets;
 }
-function updateMarketsPrices(){
-  const wrap = $('markets-list'); if (!wrap) return;
+function updateMarketsPrices(){ updateMarketRows($('markets-list')); }
+function updateWatchlistPrices(){ updateMarketRows($('watchlist-list')); }
+function updateMarketRows(wrap){
+  if (!wrap) return;
   wrap.querySelectorAll('.market-row').forEach(r => {
     const s = r.dataset.sym; const t = state.ticks[s]; if (!t) return;
-    r.querySelector('.market-price').textContent = priceFmt(s, t.price);
+    const price = r.querySelector('.market-price'); if (price) price.textContent = priceFmt(s, t.price);
     const chg = r.querySelector('.market-change');
-    chg.textContent = (t.chgPct>=0?'+':'') + t.chgPct.toFixed(2)+'%';
-    chg.className = 'market-change ' + (t.chgPct>=0?'up':'down');
+    if (chg) { chg.textContent = (t.chgPct>=0?'+':'') + t.chgPct.toFixed(2)+'%'; chg.className = 'market-change ' + (t.chgPct>=0?'up':'down'); }
+    const hi = r.querySelector('.market-high'); if (hi) hi.textContent = priceFmt(s, t.high);
+    const lo = r.querySelector('.market-low'); if (lo) lo.textContent = priceFmt(s, t.low);
+    const spark = r.querySelector('svg.spark polyline'); if (spark) spark.setAttribute('points', sparkPoints(s));
   });
 }
+function marketHeadHtml(){
+  return `<div class="market-head"><span>Symbol</span><span style="text-align:right">Last Price</span><span>Change</span><span class="desktop-col" style="text-align:right">24H High / Low</span></div>`;
+}
+function sparkPoints(sym){
+  const data = (state.history[sym] || []).slice(-18);
+  if (!data.length) return '';
+  const vals = data.map(d=>Number(d.close));
+  const min = Math.min(...vals), max = Math.max(...vals), span = max-min || 1;
+  return vals.map((v,i)=>`${(i/(vals.length-1))*78},${26-((v-min)/span)*24}`).join(' ');
+}
 function marketRowHtml(s){
-  const t = state.ticks[s.s] || { price:s.p, chgPct:0 };
+  const t = state.ticks[s.s] || { price:s.p, chgPct:0, high:s.p*1.002, low:s.p*.998 };
   return `<div class="market-row" data-sym="${s.s}">
-    <div class="hstack">
+    <div class="hstack" style="min-width:0">
       <div class="market-flag">${s.s.slice(0,3)}</div>
-      <div><div class="market-name">${s.name}</div><div class="market-sub">${s.sub}</div></div>
+      <div style="min-width:0"><div class="market-name">${s.name}</div><div class="market-sub">${s.sub}</div></div>
     </div>
-    <div>
-      <div class="market-price">${priceFmt(s.s,t.price)}</div>
-      <div class="market-change ${t.chgPct>=0?'up':'down'}">${(t.chgPct>=0?'+':'')+t.chgPct.toFixed(2)}%</div>
-    </div>
+    <div class="market-price">${priceFmt(s.s,t.price)}</div>
+    <div><div class="market-change ${t.chgPct>=0?'up':'down'}">${(t.chgPct>=0?'+':'')+t.chgPct.toFixed(2)}%</div><svg class="spark" viewBox="0 0 78 28" preserveAspectRatio="none"><polyline points="${sparkPoints(s.s)}" fill="none" stroke="${t.chgPct>=0?'#00e889':'#ff3f57'}" stroke-width="2"/></svg></div>
+    <div class="market-highlow desktop-col"><div class="market-high up">${priceFmt(s.s,t.high)}</div><div class="market-low down">${priceFmt(s.s,t.low)}</div></div>
   </div>`;
 }
 
@@ -352,18 +419,19 @@ function ensureChart(){
   const el = $('chart-container');
   el.innerHTML = '';
   const chart = LightweightCharts.createChart(el, {
-    layout: { background:{ color:'#080d18' }, textColor:'#8aa0c4', fontFamily:"'JetBrains Mono',monospace" },
-    grid: { vertLines:{ color:'rgba(255,255,255,.04)' }, horzLines:{ color:'rgba(255,255,255,.04)' } },
+    layout: { background:{ color:'#030b18' }, textColor:'#a7b3cc', fontFamily:"'JetBrains Mono',monospace" },
+    grid: { vertLines:{ color:'rgba(82,124,174,.12)' }, horzLines:{ color:'rgba(82,124,174,.12)' } },
     timeScale: { timeVisible:true, secondsVisible:false, borderColor:'rgba(255,255,255,.06)' },
     rightPriceScale: { borderColor:'rgba(255,255,255,.06)' },
     crosshair: { mode: 0 },
-    width: el.clientWidth, height: 280,
+    width: el.clientWidth, height: Math.max(320, el.clientHeight || 420),
   });
   const series = chart.addCandlestickSeries({
-    upColor:'#22c55e', downColor:'#ef4444', wickUpColor:'#22c55e', wickDownColor:'#ef4444', borderVisible:false,
+    upColor:'#00d8ff', downColor:'#7c5cff', wickUpColor:'#00d8ff', wickDownColor:'#7c5cff', borderVisible:false,
+    priceLineColor:'#00d8ff', lastValueVisible:true,
   });
   state.chart = chart; state.candleSeries = series;
-  new ResizeObserver(()=> chart.applyOptions({ width: el.clientWidth })).observe(el);
+  new ResizeObserver(()=> chart.applyOptions({ width: el.clientWidth, height: Math.max(320, el.clientHeight || 420) })).observe(el);
   document.querySelectorAll('#tf-row button').forEach(b=>{
     b.onclick = ()=>{ state.timeframe = b.dataset.tf;
       document.querySelectorAll('#tf-row button').forEach(x=>x.classList.toggle('active', x===b));
@@ -388,14 +456,15 @@ function updateChartHUD(){
   $('chart-sym-chg').textContent = `${t.change>=0?'+':''}${t.change.toFixed(5)} (${t.chgPct>=0?'+':''}${t.chgPct.toFixed(2)}%)`;
   $('cs-high').textContent = priceFmt(state.activeSymbol, t.high);
   $('cs-low').textContent = priceFmt(state.activeSymbol, t.low);
-  $('cs-open').textContent = priceFmt(state.activeSymbol, t.open);
-  $('cs-close').textContent = p;
+  setText('cs-open', priceFmt(state.activeSymbol, t.open));
+  setText('cs-close', priceFmt(state.activeSymbol, Math.abs(t.price * 11.37)));
+  updateQuickTicket();
 }
 function toggleFav(){
   const s = state.activeSymbol;
   if (state.favorites.has(s)) state.favorites.delete(s); else state.favorites.add(s);
   localStorage.setItem('gx_favs', JSON.stringify([...state.favorites]));
-  $('fav-btn').textContent = state.favorites.has(s)?'★':'☆';
+  $('fav-btn').style.color = state.favorites.has(s) ? 'var(--cyan)' : 'var(--text)';
   showToast(state.favorites.has(s)?'Added to watchlist':'Removed from watchlist');
 }
 window.toggleFav = toggleFav;
@@ -405,6 +474,39 @@ function openOrder(side){
   state.side = side;
   showScreen('place');
 }
+function syncQuickTicket(){
+  const lots = $('ct-lots'); if (lots) lots.oninput = updateQuickTicket;
+  const lev = $('ct-leverage'); if (lev) lev.onchange = updateQuickTicket;
+  const type = $('ct-order-type'); if (type) type.onchange = () => { state.orderType = type.value; };
+  updateQuickTicket();
+}
+function stepQuickLots(delta){
+  const src = $('ct-lots'); if (!src) return;
+  const v = Math.max(0.01, (parseFloat(src.value)||0)+delta);
+  src.value = v.toFixed(2); updateQuickTicket();
+}
+window.stepQuickLots = stepQuickLots;
+function updateQuickTicket(){
+  const s = state.activeSymbol; const t = state.ticks[s]; if (!t) return;
+  const spread = Math.max(t.price * 0.00002, 0.00002);
+  setText('ct-buy-price', `${priceFmt(s, t.price + spread)} BUY`);
+  setText('ct-sell-price', `${priceFmt(s, t.price - spread)} SELL`);
+  const lots = parseFloat($('ct-lots')?.value)||1;
+  const lev = parseInt(($('ct-leverage')?.value||'1:100').split(':')[1])||100;
+  const margin = (lots * 100000 * t.price) / lev / (isFx(s)?1:100);
+  setText('ct-margin', money(margin));
+}
+async function quickSubmit(side){
+  const lotsEl = $('po-lots'); if (lotsEl) lotsEl.value = ($('ct-lots')?.value || '1.00');
+  const levEl = $('po-leverage'); if (levEl) levEl.value = ($('ct-leverage')?.value || '1:100');
+  const tpEl = $('po-tp'); if (tpEl) tpEl.value = $('ct-tp')?.value || '';
+  const slEl = $('po-sl'); if (slEl) slEl.value = $('ct-sl')?.value || '';
+  state.orderType = $('ct-order-type')?.value || 'market';
+  state.side = side;
+  await submitOrder();
+}
+window.quickSubmit = quickSubmit;
+
 window.openOrder = openOrder;
 function syncPlaceOrder(){
   const s = SYM_INDEX[state.activeSymbol];
@@ -532,7 +634,7 @@ function renderWatchlist(){
   const list = ALL_SYMBOLS.filter(s => state.favorites.has(s.s));
   const wrap = $('watchlist-list');
   if (!list.length) { wrap.innerHTML = `<div style="padding:32px;text-align:center;color:var(--dim)">Favorite symbols will appear here</div>`; return; }
-  wrap.innerHTML = list.map(marketRowHtml).join('');
+  wrap.innerHTML = marketHeadHtml() + list.map(marketRowHtml).join('');
   wrap.querySelectorAll('.market-row').forEach((r,i)=> r.addEventListener('click', ()=> openSymbol(list[i].s)));
 }
 function editWatchlist(){ showScreen('markets'); showToast('Tap ★ on any chart to add'); }
