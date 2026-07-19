@@ -419,21 +419,15 @@ function openSymbol(sym){
 function ensureChart(){
   if (state.chart) return;
   const el = $('chart-container');
-  el.innerHTML = '';
-  const chart = LightweightCharts.createChart(el, {
-    layout: { background:{ color:'#030b18' }, textColor:'#a7b3cc', fontFamily:"'JetBrains Mono',monospace" },
-    grid: { vertLines:{ color:'rgba(82,124,174,.12)' }, horzLines:{ color:'rgba(82,124,174,.12)' } },
-    timeScale: { timeVisible:true, secondsVisible:false, borderColor:'rgba(255,255,255,.06)' },
-    rightPriceScale: { borderColor:'rgba(255,255,255,.06)' },
-    crosshair: { mode: 0 },
-    width: el.clientWidth, height: Math.max(320, el.clientHeight || 420),
-  });
-  const series = chart.addCandlestickSeries({
-    upColor:'#00d8ff', downColor:'#7c5cff', wickUpColor:'#00d8ff', wickDownColor:'#7c5cff', borderVisible:false,
-    priceLineColor:'#00d8ff', lastValueVisible:true,
-  });
-  state.chart = chart; state.candleSeries = series;
-  new ResizeObserver(()=> chart.applyOptions({ width: el.clientWidth, height: Math.max(320, el.clientHeight || 420) })).observe(el);
+  let canvas = $('chart-canvas');
+  if (!canvas) {
+    el.innerHTML = '<canvas id="chart-canvas"></canvas><div class="chart-watermark">GROWX</div>';
+    canvas = $('chart-canvas');
+  }
+  state.chart = canvas;
+  state.candleSeries = true;
+  state.chartResizeObserver = new ResizeObserver(drawChart);
+  state.chartResizeObserver.observe(el);
   document.querySelectorAll('#tf-row button').forEach(b=>{
     b.onclick = ()=>{ state.timeframe = b.dataset.tf;
       document.querySelectorAll('#tf-row button').forEach(x=>x.classList.toggle('active', x===b));
@@ -442,10 +436,69 @@ function ensureChart(){
   });
 }
 function redrawChart(){
-  if (!state.candleSeries) return;
-  const data = state.history[state.activeSymbol] || [];
-  state.candleSeries.setData(data);
+  if (!state.chart) return;
+  drawChart();
   updateChartHUD();
+}
+function drawChart(){
+  const canvas = $('chart-canvas');
+  const wrap = $('chart-container');
+  if (!canvas || !wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const width = Math.max(320, Math.floor(rect.width));
+  const height = Math.max(320, Math.floor(rect.height));
+  if (canvas.width !== Math.floor(width*dpr) || canvas.height !== Math.floor(height*dpr)) {
+    canvas.width = Math.floor(width*dpr);
+    canvas.height = Math.floor(height*dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,width,height);
+  const grd = ctx.createLinearGradient(0,0,0,height);
+  grd.addColorStop(0,'#061327'); grd.addColorStop(1,'#020713');
+  ctx.fillStyle = grd; ctx.fillRect(0,0,width,height);
+
+  const pad = { left: 18, right: 78, top: 18, bottom: 34 };
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+  ctx.strokeStyle = 'rgba(82,124,174,.13)'; ctx.lineWidth = 1;
+  ctx.font = '11px JetBrains Mono, monospace'; ctx.fillStyle = '#657796';
+  for (let i=0;i<=6;i++) { const y = pad.top + plotH*i/6; ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(width-pad.right,y); ctx.stroke(); }
+  for (let i=0;i<=8;i++) { const x = pad.left + plotW*i/8; ctx.beginPath(); ctx.moveTo(x,pad.top); ctx.lineTo(x,pad.top+plotH); ctx.stroke(); }
+
+  const data = (state.history[state.activeSymbol] || []).slice(-90);
+  if (!data.length) return;
+  const hi = Math.max(...data.map(c=>Number(c.high)));
+  const lo = Math.min(...data.map(c=>Number(c.low)));
+  const span = hi - lo || 1;
+  const yOf = v => pad.top + (hi - v) / span * plotH;
+  const slot = plotW / data.length;
+  const bodyW = Math.max(4, Math.min(13, slot * .58));
+  data.forEach((c,i)=>{
+    const x = pad.left + slot*i + slot*.5;
+    const open = Number(c.open), close = Number(c.close), high = Number(c.high), low = Number(c.low);
+    const up = close >= open;
+    const color = up ? '#00e889' : '#ff3f57';
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.moveTo(x, yOf(high)); ctx.lineTo(x, yOf(low)); ctx.stroke();
+    const top = Math.min(yOf(open), yOf(close));
+    const h = Math.max(2, Math.abs(yOf(open)-yOf(close)));
+    ctx.fillRect(x-bodyW/2, top, bodyW, h);
+  });
+  ctx.fillStyle = '#657796'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  for (let i=0;i<=5;i++) {
+    const val = hi - span*i/5;
+    ctx.fillText(priceFmt(state.activeSymbol, val), width-pad.right+10, pad.top+plotH*i/5);
+  }
+  const last = data[data.length-1].close;
+  const ly = yOf(last);
+  ctx.strokeStyle = 'rgba(0,216,255,.45)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(pad.left, ly); ctx.lineTo(width-pad.right, ly); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#00d8ff'; ctx.fillRect(width-pad.right+5, ly-11, pad.right-10, 22);
+  ctx.fillStyle = '#00101c'; ctx.font = '700 11px JetBrains Mono, monospace'; ctx.fillText(priceFmt(state.activeSymbol,last), width-pad.right+10, ly);
 }
 function updateChartHUD(){
   const t = state.ticks[state.activeSymbol];
