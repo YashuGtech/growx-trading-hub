@@ -108,7 +108,7 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
       <div><div class="l">Daily loss</div><div class="v" id="breach-daily">—</div></div>
       <div><div class="l">Overall loss</div><div class="v" id="breach-overall">—</div></div>
     </div>
-    <a href="accounts.html" class="cta">Buy new funded account →</a>
+    <a href="accounts.html" class="cta">Buy new funded account</a>
   </div>
 </section>
 
@@ -116,61 +116,70 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ HOME ============ -->
 <section id="screen-home" class="screen active">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px">
-      <img src="/__l5e/assets-v1/5d525aca-8f09-403a-8240-b33e405316be/growx-logo.jpg" alt="GrowX" style="width:34px;height:34px;border-radius:10px;object-fit:cover;box-shadow:0 4px 14px rgba(59,130,246,.35)" />
-      <div><div style="font-size:12px;font-weight:800;letter-spacing:1px">GROWX</div><div style="font-size:9px;color:var(--dim);letter-spacing:2px">TRADE TERMINAL</div></div>
+    <div class="brand-lockup">
+      <img src="/__l5e/assets-v1/5d525aca-8f09-403a-8240-b33e405316be/growx-logo.jpg" alt="GrowX" />
+      <div><div class="brand-title">GROWX</div><div class="brand-sub">TRADING TERMINAL</div></div>
     </div>
     <button class="icon-btn" onclick="showScreen('settings')" aria-label="Settings">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
 
-  <div class="home-hero">
-    <div class="greet">Welcome back,</div>
-    <div class="name" id="home-name">Trader</div>
-    <div class="plan-chip"><span style="width:6px;height:6px;background:#fff;border-radius:50%"></span><span id="home-plan">Stellar 1</span> · <span id="home-trade-id" class="mono">FNX-------</span></div>
-    <div class="balance-grid">
-      <div class="balance-box"><div class="label">Balance</div><div class="value" id="home-balance">$0.00</div></div>
-      <div class="balance-box"><div class="label">Equity</div><div class="value" id="home-equity">$0.00</div></div>
-    </div>
-    <div class="pnl-line">Total P&amp;L <span id="home-pnl" class="mono">+$0.00</span> · <span id="home-pnl-pct" class="mono">+0.00%</span></div>
-  </div>
+  <div class="home-desktop-grid">
+    <div class="home-main-stack">
+      <div class="metric-strip">
+        <div><div class="label">Account Balance</div><div class="value" id="home-balance">$0.00</div><div class="sub" id="home-equity-sub">Equity $0.00</div></div>
+        <div><div class="label">Today’s P/L</div><div class="value up" id="home-today-pnl">+$0.00</div><div class="chip" id="home-today-pct">+0.00%</div></div>
+        <div><div class="label">All Time P/L</div><div class="value up" id="home-pnl">+$0.00</div><div class="chip" id="home-pnl-pct">+0.00%</div></div>
+      </div>
 
-  <div class="quick-actions">
-    <div class="quick-action" onclick="showScreen('markets')">
-      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div>
-      <div class="qa-label">Trade</div>
-    </div>
-    <div class="quick-action" onclick="showScreen('orders')">
-      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h6"/></svg></div>
-      <div class="qa-label">Orders</div>
-    </div>
-    <div class="quick-action" onclick="showScreen('analytics')">
-      <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg></div>
-      <div class="qa-label">Analytics</div>
-    </div>
-  </div>
+      <div class="home-hero">
+        <div class="greet">Trading account</div>
+        <div class="name" id="home-name">Trader</div>
+        <div class="plan-chip"><span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;box-shadow:0 0 14px var(--cyan)"></span><span id="home-plan">GrowX Challenge</span> · <span id="home-trade-id" class="mono">GX-------</span></div>
+        <div class="balance-grid">
+          <div class="balance-box"><div class="label">Available Margin</div><div class="value" id="home-free-margin">$0.00</div></div>
+          <div class="balance-box"><div class="label">Margin Level</div><div class="value" id="home-margin-level">—</div></div>
+        </div>
+        <div class="pnl-line">Live equity <span id="home-equity" class="mono">$0.00</span> · Status <span id="home-status" class="mono up">Active</span></div>
+      </div>
 
-  <div class="section-header"><h2>Market Overview</h2><a onclick="showScreen('markets')">See all →</a></div>
-  <div class="market-list" id="home-markets"></div>
+      <div class="account-objectives card">
+        <div class="section-header" style="margin:0 0 14px"><h2>Trading Objectives</h2><a onclick="showScreen('analytics')">Details</a></div>
+        <div class="objective-grid">
+          <div class="objective"><div class="obj-top"><span>Daily Loss Limit</span><span class="status" id="daily-status">Normal</span></div><div class="pct">5%</div><div class="bar"><span id="daily-bar" style="width:0%"></span></div><div class="meta"><span id="daily-used">Used: 0.00%</span><span id="daily-rem">Remaining: 5.00%</span></div></div>
+          <div class="objective"><div class="obj-top"><span>Lifetime Loss Limit</span><span class="status" id="overall-status">Normal</span></div><div class="pct">8%</div><div class="bar"><span id="overall-bar" style="width:0%"></span></div><div class="meta"><span id="overall-used">Used: 0.00%</span><span id="overall-rem">Remaining: 8.00%</span></div></div>
+          <div class="objective"><div class="obj-top"><span>Phase 1 Profit Target</span><span class="status" id="phase1-status">In Progress</span></div><div class="pct">8%</div><div class="bar"><span id="phase1-bar" style="width:0%"></span></div><div class="meta"><span>Target: 8%</span><span id="phase1-progress">Progress: 0.00%</span></div></div>
+          <div class="objective"><div class="obj-top"><span>Phase 2 Profit Target</span><span class="status" id="phase2-status">Locked</span></div><div class="pct">5%</div><div class="bar"><span id="phase2-bar" style="width:0%"></span></div><div class="meta"><span>Target: 5%</span><span id="phase2-progress">Progress: 0.00%</span></div></div>
+        </div>
+      </div>
 
-  <div class="section-header"><h2>Quick Access</h2></div>
-  <div class="grid-2">
-    <div class="quick-action" onclick="showScreen('watchlist')">
-      <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
-      <div class="qa-label">Watchlist</div>
+      <div class="section-header"><h2>Market Overview</h2><a onclick="showScreen('markets')">View all</a></div>
+      <div class="market-list" id="home-markets"></div>
     </div>
-    <div class="quick-action" onclick="showScreen('profile')">
-      <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></div>
-      <div class="qa-label">Profile</div>
-    </div>
+
+    <aside class="home-side-stack">
+      <div class="quick-actions">
+        <div class="quick-action" onclick="showScreen('markets')"><div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div><div class="qa-label">Markets</div></div>
+        <div class="quick-action" onclick="showScreen('chart')"><div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 14l3-3 3 3 4-5"/></svg></div><div class="qa-label">Chart</div></div>
+        <div class="quick-action" onclick="showScreen('positions')"><div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h6"/></svg></div><div class="qa-label">Positions</div></div>
+      </div>
+      <div class="section-header"><h2>Watchlist</h2><a onclick="showScreen('watchlist')">Open</a></div>
+      <div class="market-list" id="home-watchlist"></div>
+      <div class="section-header"><h2>Account</h2><a onclick="showScreen('profile')">Profile</a></div>
+      <div class="card">
+        <div class="row-between"><span style="color:var(--dim)">Leverage</span><strong id="home-leverage">1:100</strong></div>
+        <div class="row-between" style="margin-top:12px"><span style="color:var(--dim)">Open Positions</span><strong id="home-open-count">0</strong></div>
+        <div class="row-between" style="margin-top:12px"><span style="color:var(--dim)">Used Margin</span><strong class="mono" id="home-used-margin">$0.00</strong></div>
+      </div>
+    </aside>
   </div>
 </section>
 
 <!-- ============ MARKETS ============ -->
 <section id="screen-markets" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')" aria-label="Back">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Markets</h1><div style="width:36px"></div>
   </div>
   <div class="search">
@@ -189,34 +198,37 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ CHART ============ -->
 <section id="screen-chart" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('markets')">←</button>
+    <button class="back" onclick="showScreen('markets')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1 id="chart-title">EUR/USD</h1>
-    <button class="icon-btn" onclick="toggleFav()" aria-label="Favorite" id="fav-btn">☆</button>
+    <button class="icon-btn" onclick="toggleFav()" aria-label="Favorite" id="fav-btn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></button>
   </div>
   <div class="chart-hero">
-    <div class="row-between">
+    <div class="chart-symbol-bar">
       <div><div class="sym-name" id="chart-sym-name">EUR/USD</div><div class="sym-sub" id="chart-sym-sub">Euro / US Dollar</div></div>
-    </div>
-    <div class="sym-price mono up" id="chart-sym-price">1.08945</div>
-    <div class="sym-chg up" id="chart-sym-chg">+0.00320 (+0.32%)</div>
-    <div class="chart-stats">
-      <div>High<span id="cs-high">-</span></div>
-      <div>Low<span id="cs-low">-</span></div>
-      <div>Open<span id="cs-open">-</span></div>
-      <div>Close<span id="cs-close">-</span></div>
+      <div><div class="sym-price mono up" id="chart-sym-price">1.08945</div><div class="sym-chg up" id="chart-sym-chg">+0.00320 (+0.32%)</div></div>
+      <div class="chart-stats">
+        <div>High<span id="cs-high">-</span></div>
+        <div>Low<span id="cs-low">-</span></div>
+        <div>24H Vol<span id="cs-close">-</span></div>
+      </div>
     </div>
     <div class="tf-row" id="tf-row">
-      <button data-tf="1m">1m</button>
-      <button data-tf="5m">5m</button>
-      <button data-tf="15m" class="active">15m</button>
-      <button data-tf="1h">1h</button>
-      <button data-tf="4h">4h</button>
-      <button data-tf="1d">1D</button>
+      <button data-tf="1m">M1</button>
+      <button data-tf="5m">M5</button>
+      <button data-tf="15m" class="active">M15</button>
+      <button data-tf="1h">H1</button>
+      <button data-tf="4h">H4</button>
+      <button data-tf="1d">D1</button>
     </div>
     <div id="chart-container"></div>
     <div class="trade-cta">
-      <button class="buy" onclick="openOrder('buy')">Buy</button>
-      <button class="sell" onclick="openOrder('sell')">Sell</button>
+      <div class="field"><div class="lbl">Order Type</div><div class="val"><select id="ct-order-type"><option value="market">Market Order</option><option value="limit">Limit Order</option><option value="stop">Stop Order</option></select></div></div>
+      <div class="field"><div class="lbl">Volume (Lots)</div><div class="val"><div class="stepper"><button onclick="stepQuickLots(-0.1)">−</button></div><input id="ct-lots" type="number" min="0.01" step="0.01" value="1.00" style="text-align:center" /><div class="stepper"><button onclick="stepQuickLots(0.1)">+</button></div></div></div>
+      <div class="field"><div class="lbl">Leverage</div><div class="val"><select id="ct-leverage"><option>1:50</option><option selected>1:100</option><option>1:200</option></select></div></div>
+      <div class="grid-2"><div class="field"><div class="lbl">Stop Loss</div><div class="val"><input id="ct-sl" type="number" step="0.00001" placeholder="Optional" /></div></div><div class="field"><div class="lbl">Take Profit</div><div class="val"><input id="ct-tp" type="number" step="0.00001" placeholder="Optional" /></div></div></div>
+      <div class="row-between" style="color:var(--dim);font-size:12px"><span>Margin Required</span><strong class="mono" id="ct-margin">$0.00</strong></div>
+      <button class="buy" onclick="quickSubmit('buy')"><span id="ct-buy-price">Buy</span></button>
+      <button class="sell" onclick="quickSubmit('sell')"><span id="ct-sell-price">Sell</span></button>
     </div>
   </div>
 </section>
@@ -271,9 +283,9 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ POSITIONS ============ -->
 <section id="screen-positions" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Positions</h1>
-    <button class="icon-btn" onclick="loadPositions()" aria-label="Refresh">↻</button>
+    <button class="icon-btn" onclick="loadPositions()" aria-label="Refresh"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
   </div>
   <div class="tabs" id="pos-tabs">
     <button data-pos="open" class="active">Open (<span id="pos-open-count">0</span>)</button>
@@ -289,7 +301,7 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ ORDERS (pending/history) ============ -->
 <section id="screen-orders" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Orders</h1><div style="width:36px"></div>
   </div>
   <div class="tabs" id="orders-tabs">
@@ -302,9 +314,9 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ WATCHLIST ============ -->
 <section id="screen-watchlist" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Watchlist</h1>
-    <button class="icon-btn" onclick="editWatchlist()">✎</button>
+    <button class="icon-btn" onclick="editWatchlist()" aria-label="Edit watchlist"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
   </div>
   <div class="tabs">
     <button class="active">Forex</button>
@@ -317,7 +329,7 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ WALLET ============ -->
 <section id="screen-wallet" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Wallet</h1><div style="width:36px"></div>
   </div>
   <div class="tabs">
@@ -339,21 +351,21 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
     <button onclick="showScreen('orders')">Orders</button>
     <button onclick="showScreen('analytics')">Analytics</button>
   </div>
-  <div class="section-header"><h2>Recent Transactions</h2><a>View All →</a></div>
+  <div class="section-header"><h2>Recent Transactions</h2><a>View All</a></div>
   <div class="card" id="wallet-txn-list"></div>
 </section>
 
 <!-- ============ PROFILE ============ -->
 <section id="screen-profile" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Profile</h1><div style="width:36px"></div>
   </div>
   <div class="card" style="text-align:center;padding:24px 16px">
     <div style="width:72px;height:72px;border-radius:50%;background:var(--grad);color:#fff;font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px" id="profile-avatar">GX</div>
     <div style="font-weight:700;font-size:18px" id="profile-name">Trader</div>
     <div style="font-size:12px;color:var(--dim);margin-top:2px" id="profile-plan">Stellar 1 · Trader</div>
-    <div style="margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.15);color:var(--up);display:inline-block;border-radius:999px;font-size:11px;font-weight:600" id="profile-verified">✓ Verified</div>
+    <div style="margin-top:8px;padding:4px 10px;background:rgba(34,197,94,.15);color:var(--up);display:inline-block;border-radius:999px;font-size:11px;font-weight:600" id="profile-verified">Verified</div>
   </div>
   <div class="card" style="padding:0;overflow:hidden">
     <div class="setting-row"><div class="lbl">Account Type</div><div class="val" id="pr-plan">Stellar 1</div></div>
@@ -368,7 +380,7 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ ANALYTICS ============ -->
 <section id="screen-analytics" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Analytics</h1><div style="width:36px"></div>
   </div>
   <div class="tabs">
@@ -392,17 +404,17 @@ input,select{font:inherit;color:inherit;background:transparent;border:0;outline:
 <!-- ============ SETTINGS ============ -->
 <section id="screen-settings" class="screen">
   <div class="topbar">
-    <button class="back" onclick="showScreen('home')">←</button>
+    <button class="back" onclick="showScreen('home')" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <h1>Settings</h1><div style="width:36px"></div>
   </div>
   <div class="card" style="padding:0;overflow:hidden">
-    <div class="setting-row" onclick="showScreen('profile')"><div class="icon">👤</div><div class="lbl">Account</div><div class="val">›</div></div>
-    <div class="setting-row"><div class="icon">🔒</div><div class="lbl">Security</div><div class="val">›</div></div>
-    <div class="setting-row"><div class="icon">⚙️</div><div class="lbl">Preferences</div><div class="val">›</div></div>
-    <div class="setting-row"><div class="icon">🔔</div><div class="lbl">Notifications</div><div class="val">›</div></div>
-    <div class="setting-row"><div class="icon">🎨</div><div class="lbl">Theme</div><div class="val">Stellar Dark</div></div>
-    <div class="setting-row"><div class="icon">🌐</div><div class="lbl">Language</div><div class="val">English</div></div>
-    <div class="setting-row"><div class="icon">💬</div><div class="lbl">Support Center</div><div class="val">›</div></div>
+    <div class="setting-row" onclick="showScreen('profile')"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></div><div class="lbl">Account</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="lbl">Security</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6"/></svg></div><div class="lbl">Preferences</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="lbl">Notifications</div><div class="val">›</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg></div><div class="lbl">Theme</div><div class="val">GrowX Dark</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div><div class="lbl">Language</div><div class="val">English</div></div>
+    <div class="setting-row"><div class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div><div class="lbl">Support Center</div><div class="val">›</div></div>
   </div>
   <div class="card" style="padding:0;overflow:hidden;margin-top:12px">
     <div class="setting-row logout-row" onclick="logout()"><div class="icon">⎋</div><div class="lbl">Log Out</div><div class="val">›</div></div>
