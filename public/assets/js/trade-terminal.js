@@ -105,7 +105,7 @@ function showScreen(name){
   document.querySelectorAll('.bottom-nav .tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   // Lazy load per screen
   if (name==='markets') renderMarkets();
-  if (name==='chart') { ensureChart(); redrawChart(); syncQuickTicket(); requestAnimationFrame(()=> state.chart?.timeScale().fitContent()); }
+  if (name==='chart') { ensureChart(); redrawChart(); syncQuickTicket(); requestAnimationFrame(drawChart); }
   if (name==='place') syncPlaceOrder();
   if (name==='positions') loadPositions();
   if (name==='watchlist') renderWatchlist();
