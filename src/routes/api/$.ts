@@ -462,6 +462,7 @@ function publicAccount(a: any) {
     starting_balance: Number(a.starting_balance), leverage: a.leverage, status: a.status,
     eliminated_at: a.eliminated_at || null, elimination_reason: a.elimination_reason || null,
     phase: a.phase || null, challenge_type: a.challenge_type || null,
+    daily_lock_date: a.daily_lock_date || null,
   };
 }
 
@@ -469,52 +470,78 @@ function publicAccount(a: any) {
 async function evaluateRisk(acc: any, positions: any[]): Promise<{ account: any; summary: any }> {
   const starting = Number(acc.starting_balance) || 0;
   const equity = Number(acc.equity) || 0;
-  const overallLoss = Math.max(0, starting - equity);
+  // Current overall loss (from lowest recorded equity — peak drawdown never decreases)
+  const priorMin = acc.min_equity == null ? starting : Number(acc.min_equity);
+  const minEquity = Math.min(priorMin, equity);
+  const overallLoss = Math.max(0, starting - minEquity);
   const overallLossPct = starting ? (overallLoss / starting) * 100 : 0;
+  const overallPeakPct = Math.max(Number(acc.overall_loss_peak_pct || 0), overallLossPct);
 
-  // Daily loss = negative sum of positions closed today + floating losses on open positions (approx: use 0 for floating, closed only for MVP)
-  const startOfDay = new Date(); startOfDay.setUTCHours(0, 0, 0, 0);
+  // Daily loss = today's realized negative P/L. Peak per day is sticky —
+  // profits later in the day never lower the recorded loss %.
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const startOfDay = new Date(todayISO + "T00:00:00.000Z");
   const closedToday = positions.filter(
     (p) => p.status === "closed" && p.close_time && new Date(p.close_time) >= startOfDay,
   );
   const dailyRealized = closedToday.reduce((s, p) => s + Number(p.realized_pnl || 0), 0);
-  const dailyLoss = Math.max(0, -dailyRealized);
-  const dailyLossPct = starting ? (dailyLoss / starting) * 100 : 0;
+  const dailyLossLive = Math.max(0, -dailyRealized);
+  const dailyLossLivePct = starting ? (dailyLossLive / starting) * 100 : 0;
+  const prevPeakDate = acc.daily_loss_peak_date ? String(acc.daily_loss_peak_date).slice(0, 10) : null;
+  const carriedPeakPct = prevPeakDate === todayISO ? Number(acc.daily_loss_peak_pct || 0) : 0;
+  const dailyPeakPct = Math.max(carriedPeakPct, dailyLossLivePct);
+  const dailyLoss = (dailyPeakPct / 100) * starting;
+  const dailyLossPct = dailyPeakPct;
 
   const DAILY_CAP = 5;   // %
   const OVERALL_CAP = 8; // %
 
+  const updates: any = {};
+  if (Number(acc.overall_loss_peak_pct || 0) < overallPeakPct) updates.overall_loss_peak_pct = Number(overallPeakPct.toFixed(4));
+  if (acc.min_equity == null || Number(acc.min_equity) > minEquity) updates.min_equity = minEquity;
+  if (prevPeakDate !== todayISO || Number(acc.daily_loss_peak_pct || 0) < dailyPeakPct) {
+    updates.daily_loss_peak_pct = Number(dailyPeakPct.toFixed(4));
+    updates.daily_loss_peak_date = todayISO;
+  }
+  // 5% daily → suspend trading for today only
+  const lockDate = acc.daily_lock_date ? String(acc.daily_lock_date).slice(0, 10) : null;
+  if (dailyPeakPct >= DAILY_CAP && lockDate !== todayISO && acc.status !== "eliminated") {
+    updates.daily_lock_date = todayISO;
+  }
+
   let account = acc;
-  if (acc.status !== "eliminated" && (overallLossPct >= OVERALL_CAP || dailyLossPct >= DAILY_CAP)) {
-    const reason = overallLossPct >= OVERALL_CAP
-      ? `Overall drawdown ${overallLossPct.toFixed(2)}% exceeded 8% limit`
-      : `Daily loss ${dailyLossPct.toFixed(2)}% exceeded 5% limit`;
-    // Force-close open positions at their open price (no PnL applied — freeze state)
+  // 8% overall → permanent elimination
+  if (acc.status !== "eliminated" && overallPeakPct >= OVERALL_CAP) {
+    const reason = `Overall drawdown ${overallPeakPct.toFixed(2)}% exceeded 8% limit`;
     const openIds = positions.filter((p) => p.status === "open").map((p) => p.id);
     if (openIds.length) {
       await db.from("trade_positions").update({
         status: "closed", close_time: new Date().toISOString(),
       }).in("id", openIds);
     }
-    const upd = await db.from("trade_accounts").update({
+    Object.assign(updates, {
       status: "eliminated",
       eliminated_at: new Date().toISOString(),
       elimination_reason: reason,
       used_margin: 0,
-    } as any).eq("id", acc.id).select("*").single();
-    account = upd.data || { ...acc, status: "eliminated", eliminated_at: new Date().toISOString(), elimination_reason: reason };
+    });
+  }
+  if (Object.keys(updates).length) {
+    const upd = await db.from("trade_accounts").update(updates as any).eq("id", acc.id).select("*").single();
+    if (upd.data) account = upd.data;
   }
   return {
     account,
     summary: {
       starting_balance: starting,
       equity,
-      daily_loss: dailyLoss,
+      daily_loss: Number(dailyLoss.toFixed(2)),
       daily_loss_pct: Number(dailyLossPct.toFixed(2)),
-      overall_loss: overallLoss,
-      overall_loss_pct: Number(overallLossPct.toFixed(2)),
+      overall_loss: Number(overallLoss.toFixed(2)),
+      overall_loss_pct: Number(overallPeakPct.toFixed(2)),
       daily_cap_pct: DAILY_CAP,
       overall_cap_pct: OVERALL_CAP,
+      suspended_today: (account.daily_lock_date ? String(account.daily_lock_date).slice(0,10) : null) === todayISO,
     },
   };
 }
