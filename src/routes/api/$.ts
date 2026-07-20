@@ -382,6 +382,10 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
     const acc = await getTradeAccountFromRequest(request);
     if (!acc) return json({ ok: false }, { status: 401 });
     if (acc.status === "eliminated") return json({ ok: false, error: "Account eliminated — risk limits breached. Purchase a new funded account to continue trading." }, { status: 403 });
+    const todayISO = new Date().toISOString().slice(0, 10);
+    if (acc.daily_lock_date && String(acc.daily_lock_date).slice(0, 10) === todayISO) {
+      return json({ ok: false, error: "Trading suspended for today — daily 5% loss limit reached. Trading resumes tomorrow (UTC)." }, { status: 403 });
+    }
     const b = await readJson(request);
     const lots = Math.max(0.01, Number(b.lots || 0.01));
     const price = Number(b.open_price || b.price || 0);
@@ -391,7 +395,7 @@ async function handle(request: Request, params: { _splat?: string }): Promise<Re
     const ins = await db.from("trade_positions").insert({
       trade_account_id: acc.id, pair: b.pair, side: b.side === "sell" ? "sell" : "buy",
       lots, leverage, open_price: price, stop_loss: b.stop_loss || null, take_profit: b.take_profit || null,
-      margin, status: "open", order_type: b.order_type || "market",
+      margin, status: "open", order_type: "market",
     }).select("*").single();
     await db.from("trade_accounts").update({ used_margin: Number(acc.used_margin) + margin }).eq("id", acc.id);
     return json({ ok: true, position: ins.data });
