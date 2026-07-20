@@ -661,7 +661,10 @@ export type Database = {
           challenge_type: string
           created_at: string
           credentials_emailed_at: string | null
+          daily_lock_date: string | null
           daily_loss_pct: number | null
+          daily_loss_peak_date: string | null
+          daily_loss_peak_pct: number
           eliminated_at: string | null
           elimination_reason: string | null
           equity: number
@@ -669,8 +672,10 @@ export type Database = {
           last_seen_at: string | null
           leverage: number
           max_loss_pct: number | null
+          min_equity: number | null
           min_trading_days: number | null
           order_id: number | null
+          overall_loss_peak_pct: number
           parent_account_id: number | null
           password_hash: string
           password_plain: string | null
@@ -693,7 +698,10 @@ export type Database = {
           challenge_type?: string
           created_at?: string
           credentials_emailed_at?: string | null
+          daily_lock_date?: string | null
           daily_loss_pct?: number | null
+          daily_loss_peak_date?: string | null
+          daily_loss_peak_pct?: number
           eliminated_at?: string | null
           elimination_reason?: string | null
           equity?: number
@@ -701,8 +709,10 @@ export type Database = {
           last_seen_at?: string | null
           leverage?: number
           max_loss_pct?: number | null
+          min_equity?: number | null
           min_trading_days?: number | null
           order_id?: number | null
+          overall_loss_peak_pct?: number
           parent_account_id?: number | null
           password_hash: string
           password_plain?: string | null
@@ -725,7 +735,10 @@ export type Database = {
           challenge_type?: string
           created_at?: string
           credentials_emailed_at?: string | null
+          daily_lock_date?: string | null
           daily_loss_pct?: number | null
+          daily_loss_peak_date?: string | null
+          daily_loss_peak_pct?: number
           eliminated_at?: string | null
           elimination_reason?: string | null
           equity?: number
@@ -733,8 +746,10 @@ export type Database = {
           last_seen_at?: string | null
           leverage?: number
           max_loss_pct?: number | null
+          min_equity?: number | null
           min_trading_days?: number | null
           order_id?: number | null
+          overall_loss_peak_pct?: number
           parent_account_id?: number | null
           password_hash?: string
           password_plain?: string | null
