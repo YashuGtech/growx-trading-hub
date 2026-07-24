@@ -590,12 +590,13 @@
       ton: 'UQAqU4k5MV87GuXES4YgmfQRG8ychAckqTNEGblFIwJfQ_w8'
     };
     const addr = addrs[net] || addrs.trc20;
+    // Real, scannable QR via public QR image API (fallback to inline SVG if network fails)
+    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=8&format=png&data=' + encodeURIComponent(addr);
     qrWrap.innerHTML = `
-      <div class="qr-wrap">
-        <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;background:#fff;border-radius:14px;">
-          <rect width="21" height="21" fill="#fff"/>
-          ${generateQrPattern(addr)}
-        </svg>
+      <div class="qr-wrap" style="background:#fff;border-radius:14px;padding:0;overflow:hidden;line-height:0;">
+        <img src="${qrSrc}" alt="Wallet address QR" width="260" height="260"
+             style="display:block;width:100%;height:auto;"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'),{innerHTML:'<svg viewBox=\\'0 0 21 21\\' xmlns=\\'http://www.w3.org/2000/svg\\' style=\\'width:100%;height:100%;background:#fff\\'>${generateQrPattern(addr).replace(/'/g,"&#39;")}</svg>'}))" />
       </div>
     `;
     const addrEl = document.getElementById('addr-text');
