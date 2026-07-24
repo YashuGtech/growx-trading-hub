@@ -2,355 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>GrowX Trade Terminal</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
-:root{
-  --bg:#000000;
-  --bg-2:#050810;
-  --panel:#0a0e1a;
-  --panel-2:#0d1220;
-  --line:rgba(255,255,255,.06);
-  --line-2:rgba(255,255,255,.10);
-  --text:#ffffff;
-  --dim:#8b93a7;
-  --dim2:#5a6278;
-  --violet:#7c5cff;
-  --violet-2:#5b3fe0;
-  --blue:#3b82f6;
-  --up:#00e676;
-  --down:#ff4d57;
-  --up-soft:rgba(0,230,118,.14);
-  --down-soft:rgba(255,77,87,.14);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
-body{background:radial-gradient(1200px 700px at 80% -10%,rgba(124,92,255,.06),transparent 60%),#000}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-input,select{font:inherit;color:inherit;background:transparent;border:0;outline:0;width:100%}
-.mono{font-family:'JetBrains Mono',monospace}
-.up{color:var(--up)} .down{color:var(--down)}
-.hidden{display:none!important}
-
-/* ============ SHELL ============ */
-.app{display:grid;grid-template-columns:1fr;min-height:100vh}
-.screens{min-width:0}
-
-/* Top bar (mobile + desktop) */
-.tv-topbar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:#000;position:sticky;top:0;z-index:30}
-.tv-topbar .menu-btn,.tv-topbar .icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--text);background:#0a0e1a;flex:0 0 40px}
-.tv-search{flex:1;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#0a0e1a;color:var(--dim);min-width:0}
-.tv-search input{color:var(--text)}
-.tv-watchlist-btn{height:40px;padding:0 16px;border-radius:12px;border:1px solid rgba(124,92,255,.4);background:rgba(124,92,255,.08);color:#a691ff;font-weight:700;font-size:13px;flex:0 0 auto}
-.tv-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#3b82f6);display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;position:relative}
-.tv-avatar::after{content:"";position:absolute;right:1px;bottom:1px;width:9px;height:9px;background:var(--up);border-radius:50%;border:2px solid #000}
-
-/* Quote strip */
-.quote-strip{display:flex;gap:0;padding:0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;background:#000}
-.quote-strip::-webkit-scrollbar{display:none}
-.quote{flex:1 0 auto;min-width:150px;padding:12px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px;cursor:pointer;position:relative}
-.quote.active{background:linear-gradient(180deg,rgba(124,92,255,.14),transparent 60%);box-shadow:inset 0 0 0 1px rgba(124,92,255,.45)}
-.quote .q-sym{font-size:13px;font-weight:800;color:var(--text)}
-.quote .q-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:2px}
-.quote .q-price{font:800 15px/1 'JetBrains Mono',monospace}
-.quote .q-chg{font:700 12px/1 'JetBrains Mono',monospace}
-.quote-add{flex:0 0 52px;display:grid;place-items:center;color:var(--dim);border-right:1px solid var(--line)}
-
-/* Main trading grid */
-.trade-shell{display:grid;grid-template-columns:52px minmax(0,1fr) 340px;grid-template-rows:minmax(0,1fr) auto;min-height:calc(100vh - 155px)}
-.tool-rail{border-right:1px solid var(--line);background:#000;display:flex;flex-direction:column;gap:2px;padding:10px 0}
-.tool-rail button{width:52px;height:44px;display:grid;place-items:center;color:var(--dim);border-radius:0;transition:.12s}
-.tool-rail button:hover,.tool-rail button.active{color:#a691ff;background:rgba(124,92,255,.08)}
-.tool-rail svg{width:18px;height:18px}
-
-.chart-col{display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--line);background:#000}
-.chart-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.chart-symbol{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;flex:0 0 auto}
-.chart-symbol .dim{color:var(--dim);font-weight:500}
-.tf-group{display:flex;gap:2px;background:transparent}
-.tf-group button{padding:6px 12px;border-radius:8px;color:var(--dim);font-size:12px;font-weight:700}
-.tf-group button.active{background:rgba(124,92,255,.12);color:#a691ff}
-.tool-chip{height:32px;padding:0 10px;border-radius:8px;color:var(--dim);display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
-.tool-chip:hover{background:rgba(255,255,255,.04);color:var(--text)}
-.ohlc-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;padding:8px 14px;border-bottom:1px solid var(--line);font:700 12px/1.2 'JetBrains Mono',monospace}
-.ohlc-row .k{color:var(--dim);font-weight:600;margin-right:4px}
-.ohlc-row .v{color:var(--text)}
-#chart-frame{flex:1;min-height:400px;position:relative;background:#000}
-#tv_chart_container,#chart-frame iframe{width:100%!important;height:100%!important;border:0;display:block}
-
-/* Right ticket */
-.ticket{background:#000;padding:16px;overflow-y:auto;max-height:calc(100vh - 155px)}
-.ticket-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);margin-bottom:16px}
-.ticket-tabs button{padding:12px 0;color:var(--dim);font-weight:700;font-size:14px;position:relative}
-.ticket-tabs button.active{color:#a691ff}
-.ticket-tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#a691ff}
-.field-row{margin-bottom:14px}
-.field-label{font-size:12px;color:var(--dim);font-weight:600;margin-bottom:6px}
-.field-input{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#0a0e1a}
-.field-input input,.field-input select{font-size:14px;font-weight:600}
-.field-input select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b93a7' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 0 center;padding-right:16px}
-.split-2{display:grid;grid-template-columns:1fr 100px;gap:8px}
-.chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-.chip-grid button{height:36px;border-radius:8px;border:1px solid var(--line);background:#0a0e1a;color:var(--text);font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace}
-.chip-grid button.active{border-color:#7c5cff;background:rgba(124,92,255,.14);color:#a691ff}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.toggle-row .lbl{font-weight:700;color:var(--text)}
-.switch{width:38px;height:22px;background:#26304a;border-radius:999px;position:relative;transition:.15s;cursor:pointer;flex:0 0 auto}
-.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.15s}
-.switch.on{background:var(--up)}
-.switch.on::after{left:18px}
-.tp-block{margin-bottom:14px;padding:12px;border-radius:10px;background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.15)}
-.sl-block{margin-bottom:14px;padding:12px;border-radius:10px;background:rgba(255,77,87,.04);border:1px solid rgba(255,77,87,.15)}
-.tp-block.off,.sl-block.off{opacity:.5}
-.tp-block .row,.sl-block .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;margin-top:6px}
-.tp-block .row .lbl,.sl-block .row .lbl{font-size:12px;color:var(--dim)}
-.tp-block .row .field-input,.sl-block .row .field-input{height:36px;padding:0 10px;background:#0a0e1a}
-.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
-.summary-row .k{color:var(--dim)}
-.summary-row .v{font-family:'JetBrains Mono',monospace;font-weight:700}
-.trade-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
-.trade-btns button{padding:14px 8px;border-radius:10px;font-weight:800;font-size:14px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}
-.trade-btns .buy{background:linear-gradient(180deg,#06c66c,#00a058);box-shadow:0 8px 24px rgba(0,230,118,.2)}
-.trade-btns .sell{background:linear-gradient(180deg,#e93848,#c72232);box-shadow:0 8px 24px rgba(255,77,87,.2)}
-.trade-btns .p{font:800 15px 'JetBrains Mono',monospace}
-
-/* Bottom account strip (desktop) */
-.account-strip{grid-column:1/-1;display:grid;grid-template-columns:1.4fr repeat(5,1fr);border-top:1px solid var(--line);background:#000}
-.account-strip>div{padding:14px 18px;border-right:1px solid var(--line)}
-.account-strip>div:last-child{border-right:0}
-.account-strip .label{font-size:12px;color:var(--dim);font-weight:600}
-.account-strip .value{font:800 18px 'JetBrains Mono',monospace;color:var(--text);margin-top:4px}
-.account-strip .value .u{color:var(--dim);font-size:12px;margin-left:4px}
-.account-strip .primary .value{color:var(--up);font-size:26px}
-
-/* Positions area on mobile */
-.pos-strip{padding:12px 14px;background:#000;border-top:1px solid var(--line)}
-.pos-tabs{display:flex;gap:16px;border-bottom:1px solid var(--line);margin-bottom:10px}
-.pos-tabs button{padding:10px 0;color:var(--dim);font-weight:700;font-size:13px;position:relative}
-.pos-tabs button.active{color:#a691ff}
-.pos-tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#a691ff}
-.pos-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}
-.pos-row .col-1 .sym{font-weight:800;font-size:14px}
-.pos-row .col-1 .side{font-size:11px;font-weight:700;margin-top:2px}
-.pos-row .m{font-family:'JetBrains Mono',monospace}
-.pos-empty{padding:24px;text-align:center;color:var(--dim);font-size:13px}
-
-/* Modals */
-.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#0d1220;color:var(--text);padding:12px 18px;border-radius:12px;border:1px solid var(--line);font-size:13px;z-index:100;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.toast.error{border-color:rgba(255,77,87,.5);color:#ffd0d6}
-.toast.success{border-color:rgba(0,230,118,.5);color:#c9ffe8}
-
-/* Suspended overlay */
-.suspended-banner{background:linear-gradient(90deg,rgba(255,77,87,.2),rgba(255,77,87,.05));border-bottom:1px solid rgba(255,77,87,.4);padding:12px 20px;display:flex;align-items:center;gap:12px;color:#ffd0d6;font-weight:700;font-size:13px}
-.suspended-banner svg{flex:0 0 20px;color:var(--down)}
-.eliminated-screen{padding:60px 20px;text-align:center;max-width:520px;margin:0 auto}
-.eliminated-screen .ic{width:72px;height:72px;border-radius:22px;background:rgba(255,77,87,.14);color:var(--down);display:grid;place-items:center;margin:0 auto 20px}
-.eliminated-screen h2{font-size:26px;font-weight:900;margin-bottom:10px}
-.eliminated-screen p{color:var(--dim);line-height:1.6;margin-bottom:22px}
-.eliminated-screen a{display:inline-block;padding:14px 28px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#3b82f6);color:#fff;font-weight:800;text-decoration:none}
-.eliminated-screen .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0}
-.eliminated-screen .stats>div{background:#0a0e1a;border:1px solid var(--line);border-radius:12px;padding:12px}
-.eliminated-screen .stats .l{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
-.eliminated-screen .stats .v{font:800 16px 'JetBrains Mono',monospace;color:var(--down);margin-top:4px}
-
-/* ============ MOBILE ============ */
-@media (max-width:1023px){
-  .trade-shell{grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto auto}
-  .tool-rail{grid-column:1;grid-row:2;flex-direction:column;border-right:1px solid var(--line)}
-  .tool-rail button{width:44px;height:38px}
-  .tool-rail svg{width:16px;height:16px}
-  .chart-col{grid-column:2;grid-row:2;border-right:0}
-  .ticket{grid-column:1/-1;grid-row:3;max-height:none;border-top:1px solid var(--line)}
-  .account-strip{display:none}
-  #chart-frame{min-height:340px;height:44vh}
-  .quote{min-width:118px;padding:10px 12px}
-  .quote .q-price{font-size:14px}
-  .tv-topbar{padding:10px}
-  .tv-search{height:36px}
-  .tv-watchlist-btn{padding:0 12px;font-size:12px;height:36px}
-  .tv-avatar,.tv-topbar .icon-btn,.tv-topbar .menu-btn{width:36px;height:36px;flex:0 0 36px}
-}
-@media (max-width:520px){
-  .tv-search{display:none}
-}
-
-/* ============ BREACHED SCREEN ============ */
-.screen{display:none}
-.screen.active{display:block}
+  html,body{margin:0;height:100%;background:#05070d;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  .boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+  .spin{width:42px;height:42px;border:3px solid #1e293b;border-top-color:#3b82f6;border-radius:50%;animation:s 0.8s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .lbl{font-size:.85rem;color:#94a3b8;letter-spacing:.05em}
+  iframe{border:0;width:100vw;height:100vh;display:block}
 </style>
 </head>
 <body>
-
-<div class="app">
-  <!-- ============ ELIMINATED / SUSPENDED SCREEN ============ -->
-  <section id="screen-breached" class="screen">
-    <div class="eliminated-screen">
-      <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
-      <h2>Account eliminated</h2>
-      <p id="breach-reason">Your account has breached the 8% overall loss limit. All positions have been closed and trading is permanently disabled.</p>
-      <div class="stats">
-        <div><div class="l">Daily loss (peak)</div><div class="v" id="breach-daily">—</div></div>
-        <div><div class="l">Overall loss (peak)</div><div class="v" id="breach-overall">—</div></div>
-      </div>
-      <a href="accounts.html">Buy new funded account</a>
-    </div>
-  </section>
-
-  <!-- ============ TRADER SCREEN ============ -->
-  <section id="screen-trader" class="screen active">
-    <div class="tv-topbar">
-      <button class="menu-btn" aria-label="Menu" onclick="toggleWatchlistSheet()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg></button>
-      <label class="tv-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input id="sym-search" placeholder="Search symbol..." /></label>
-      <button class="tv-watchlist-btn">Watchlist</button>
-      <button class="icon-btn" aria-label="Region"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></button>
-      <button class="icon-btn" aria-label="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-      <button class="icon-btn" aria-label="Notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-      <div class="tv-avatar" id="user-avatar" onclick="logout()" title="Log out">GX</div>
-    </div>
-
-    <div id="suspended-banner" class="suspended-banner" style="display:none">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>
-      <span>Trading suspended for today — 5% daily loss limit hit. Resumes tomorrow (UTC).</span>
-    </div>
-
-    <!-- QUOTE STRIP -->
-    <div class="quote-strip" id="quote-strip"></div>
-
-    <!-- MAIN GRID -->
-    <div class="trade-shell">
-      <!-- Left drawing toolbar (visual — TradingView widget has its own too) -->
-      <div class="tool-rail">
-        <button title="Crosshair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg></button>
-        <button title="Trendline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="20" x2="20" y2="4"/></svg></button>
-        <button title="Horizontal line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><circle cx="6" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/></svg></button>
-        <button title="Fib retracement"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M3 9h18M3 13h12M3 17h18M3 21h18"/></svg></button>
-        <button title="Channel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="18" x2="21" y2="6"/><line x1="3" y1="21" x2="21" y2="9"/></svg></button>
-        <button title="Brush"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.34-3 3 0 1.5-1.4 2.06-2.07 2.06 1.02 1.34 3 3 5 3 2.76 0 5-2.24 5-5a3 3 0 0 0-3-3z"/></svg></button>
-        <button title="Text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v3M9 20h6M12 4v16"/></svg></button>
-        <button title="Emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></button>
-        <button title="Ruler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.3 8.7l-6-6a1 1 0 0 0-1.4 0L2.7 13.9a1 1 0 0 0 0 1.4l6 6a1 1 0 0 0 1.4 0L21.3 10.1a1 1 0 0 0 0-1.4z"/><path d="M7 17l-1-1M11 13l-1-1M15 9l-1-1"/></svg></button>
-        <button title="Zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></button>
-        <button title="Magnet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v9a6 6 0 0 0 12 0V3"/><line x1="6" y1="3" x2="10" y2="3"/><line x1="14" y1="3" x2="18" y2="3"/></svg></button>
-        <button title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
-      </div>
-
-      <!-- Chart column -->
-      <div class="chart-col">
-        <div class="chart-toolbar">
-          <div class="chart-symbol"><span id="ct-sym">Gold Spot / U.S. Dollar</span> <span class="dim">·</span> <span class="dim" id="ct-tf-lbl">1D</span> <span class="dim">·</span> <span class="dim">OANDA</span></div>
-          <div style="flex:1"></div>
-          <div class="tf-group" id="tf-group">
-            <button data-tf="1">1m</button>
-            <button data-tf="5">5m</button>
-            <button data-tf="15">15m</button>
-            <button data-tf="60">1h</button>
-            <button data-tf="240">4h</button>
-            <button data-tf="D" class="active">1D</button>
-          </div>
-          <button class="tool-chip" onclick="cycleChartType()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="10" width="4" height="8"/><line x1="8" y1="6" x2="8" y2="10"/><line x1="8" y1="18" x2="8" y2="20"/><rect x="14" y="6" width="4" height="10"/><line x1="16" y1="4" x2="16" y2="6"/><line x1="16" y1="16" x2="16" y2="20"/></svg></button>
-          <button class="tool-chip" onclick="openIndicators()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l3-3 4 4 5-6"/></svg> Indicators</button>
-        </div>
-        <div class="ohlc-row" id="ohlc-row">
-          <div><span class="k">O</span><span class="v up" id="oh-o">-</span></div>
-          <div><span class="k">H</span><span class="v up" id="oh-h">-</span></div>
-          <div><span class="k">L</span><span class="v up" id="oh-l">-</span></div>
-          <div><span class="k">C</span><span class="v up" id="oh-c">-</span></div>
-          <div><span class="v" id="oh-chg">-</span></div>
-          <div style="margin-left:auto"><span class="k">Vol</span><span class="v up" id="oh-vol">-</span></div>
-        </div>
-        <div id="chart-frame"><div id="tv_chart_container"></div></div>
-
-        <!-- Mobile positions strip -->
-        <div class="pos-strip">
-          <div class="pos-tabs">
-            <button data-pt="open" class="active">Positions (<span id="pt-open-n">0</span>)</button>
-            <button data-pt="closed">History</button>
-          </div>
-          <div id="pos-list"></div>
-        </div>
-      </div>
-
-      <!-- Right ticket -->
-      <div class="ticket">
-        <div class="ticket-tabs">
-          <button data-tk="trade" class="active">Trade</button>
-          <button data-tk="tools">Tools</button>
-        </div>
-        <div id="tk-trade">
-          <div class="field-row">
-            <div class="field-label">Order Type</div>
-            <div class="field-input"><input value="Market" readonly style="font-weight:700" /></div>
-          </div>
-          <div class="field-row">
-            <div class="field-label">Volume</div>
-            <div class="split-2">
-              <div class="field-input"><input id="tk-lots" type="number" min="0.01" step="0.01" value="1.00" /></div>
-              <div class="field-input"><select id="tk-unit"><option>Lots</option></select></div>
-            </div>
-            <div class="chip-grid">
-              <button data-lots="0.01">0.01</button>
-              <button data-lots="0.1">0.1</button>
-              <button data-lots="1" class="active">1</button>
-              <button data-lots="10">10</button>
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field-label">Leverage</div>
-            <div class="field-input"><select id="tk-lev"><option>1:50</option><option selected>1:100</option><option>1:200</option><option>1:500</option></select></div>
-          </div>
-
-          <div class="tp-block" id="tk-tp-block">
-            <div class="toggle-row"><span class="lbl">TP</span><div class="switch on" id="tp-switch" onclick="toggleTP()"></div></div>
-            <div class="row">
-              <div><div class="lbl">Price</div><div class="field-input"><input id="tk-tp" type="number" step="0.00001" placeholder="0.00" /></div></div>
-              <div><div class="lbl">Pips</div><div class="field-input"><input id="tk-tp-pips" type="number" step="1" placeholder="+0" /></div></div>
-            </div>
-          </div>
-          <div class="sl-block" id="tk-sl-block">
-            <div class="toggle-row"><span class="lbl">SL</span><div class="switch on" id="sl-switch" onclick="toggleSL()"></div></div>
-            <div class="row">
-              <div><div class="lbl">Price</div><div class="field-input"><input id="tk-sl" type="number" step="0.00001" placeholder="0.00" /></div></div>
-              <div><div class="lbl">Pips</div><div class="field-input"><input id="tk-sl-pips" type="number" step="1" placeholder="-0" /></div></div>
-            </div>
-          </div>
-
-          <div class="summary-row"><span class="k">Margin Required</span><span class="v" id="tk-margin">0.00 USD</span></div>
-          <div class="summary-row"><span class="k">Est. Profit</span><span class="v up" id="tk-est">+0.00 USD</span></div>
-
-          <div class="trade-btns">
-            <button class="buy" onclick="placeTrade('buy')"><span>Buy / Long</span><span class="p" id="btn-buy">0.00</span></button>
-            <button class="sell" onclick="placeTrade('sell')"><span>Sell / Short</span><span class="p" id="btn-sell">0.00</span></button>
-          </div>
-        </div>
-        <div id="tk-tools" style="display:none">
-          <div class="summary-row"><span class="k">Trade ID</span><span class="v mono" id="acc-trade-id">—</span></div>
-          <div class="summary-row"><span class="k">Plan</span><span class="v" id="acc-plan">—</span></div>
-          <div class="summary-row"><span class="k">Phase</span><span class="v" id="acc-phase">—</span></div>
-          <div class="summary-row"><span class="k">Status</span><span class="v up" id="acc-status">Active</span></div>
-          <hr style="border:0;border-top:1px solid var(--line);margin:12px 0" />
-          <div class="summary-row"><span class="k">Daily Loss (peak)</span><span class="v down" id="risk-daily">0.00%</span></div>
-          <div class="summary-row"><span class="k">Overall Loss (peak)</span><span class="v down" id="risk-overall">0.00%</span></div>
-          <div class="summary-row"><span class="k">Daily Cap</span><span class="v">5.00%</span></div>
-          <div class="summary-row"><span class="k">Overall Cap</span><span class="v">8.00%</span></div>
-          <p style="margin-top:12px;font-size:12px;color:var(--dim);line-height:1.5">Loss progression is permanent for the day — profits will not reduce recorded daily loss. Overall drawdown is measured from your peak equity and never resets.</p>
-        </div>
-      </div>
-
-      <!-- Bottom account strip (desktop) -->
-      <div class="account-strip">
-        <div class="primary"><div class="label">Account Balance</div><div class="value" id="s-balance">0.00 <span class="u">USD</span></div></div>
-        <div><div class="label">Equity</div><div class="value" id="s-equity">0.00 <span class="u">USD</span></div></div>
-        <div><div class="label">Total Margin</div><div class="value" id="s-tmargin">0.00 <span class="u">USD</span></div></div>
-        <div><div class="label">Free Margin</div><div class="value" id="s-fmargin">0.00 <span class="u">USD</span></div></div>
-        <div><div class="label">Margin Level</div><div class="value" id="s-mlevel">— <span class="u">%</span></div></div>
-        <div><div class="label">Transaction Fee</div><div class="value">0 <span class="u">%</span></div></div>
-      </div>
-    </div>
-  </section>
+<div class="boot" id="boot">
+  <div class="spin"></div>
+  <div class="lbl">Loading trading terminal…</div>
 </div>
+<script>
+(function(){
+  // Auth gate (same as before)
+  var session;
+  try { session = JSON.parse(localStorage.getItem('stx_session') || 'null'); } catch(e){ session = null; }
+  if (!session || !session.id) { location.replace('trade-terminal.html'); return; }
 
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script src="assets/js/trade-terminal.js"></script>
+  // Viewport routing: mobile (< 900px) → tradepro; else desktop terminal.
+  var isMobile = window.matchMedia('(max-width: 899px)').matches
+              || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  var target = isMobile ? 'terminal-mobile.html' : 'terminal-desktop.html';
+
+  // Pass account context via query so the terminal pages can read it if desired.
+  var q = new URLSearchParams({
+    id: session.id || '',
+    plan: session.plan || '',
+    balance: String(session.balance || ''),
+    name: session.name || ''
+  });
+  var url = target + '#' + q.toString();
+
+  // Mount as full-viewport iframe so users can return via nav without losing session state.
+  var f = document.createElement('iframe');
+  f.src = url;
+  f.setAttribute('allow','fullscreen; clipboard-write');
+  f.onload = function(){ var b = document.getElementById('boot'); if (b) b.remove(); };
+  document.body.appendChild(f);
+
+  // Re-route if the viewport class changes materially (e.g., rotating tablet).
+  var lastMobile = isMobile;
+  window.addEventListener('resize', function(){
+    var m = window.matchMedia('(max-width: 899px)').matches;
+    if (m !== lastMobile) { lastMobile = m; f.src = (m ? 'terminal-mobile.html' : 'terminal-desktop.html') + '#' + q.toString(); }
+  });
+})();
+</script>
 </body>
 </html>
