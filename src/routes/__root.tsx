@@ -83,6 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Get funded up to $300,000 with GrowX. Trade with our capital, keep up to 90% of profits." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "GrowX — Premium Funded Trading Accounts" },
+      { name: "twitter:description", content: "Get funded up to $300,000 with GrowX. Trade with our capital, keep up to 90% of profits." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/12db501a-a0fb-48c4-9910-71a4f063c0f2/id-preview-f9a529d1--aa84e9d3-f48a-44c7-8e71-3a4bdc397379.lovable.app-1784884793081.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/12db501a-a0fb-48c4-9910-71a4f063c0f2/id-preview-f9a529d1--aa84e9d3-f48a-44c7-8e71-3a4bdc397379.lovable.app-1784884793081.png" },
     ],
     links: [
       {
